@@ -1,18 +1,16 @@
 <template>
-  <div>
-    <h1>Gradeer Plus</h1>
-    <v-btn>
-      Button
-    </v-btn>
-  </div>
+  <el-container>
+    <h1>Home</h1>
+  </el-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'Home'
-});
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default {
+  name: 'Home',
+}
 </script>
 
 <style>
