@@ -1,15 +1,15 @@
 <template>
-  <el-menu :router="true" :collapse="isCollapse">
+  <el-menu default-active="/" :router="true">
     <router-link to="/">
-      <el-menu-item>
+      <el-menu-item index="/">
         <el-icon>
           <HomeFilled />
         </el-icon>
-        <template #title>Home</template>
+        <template #title>Assignment</template>
       </el-menu-item>
     </router-link>
     <router-link to="/about">
-      <el-menu-item>
+      <el-menu-item index="/about">
         <el-icon>
           <InfoFilled />
         </el-icon>
