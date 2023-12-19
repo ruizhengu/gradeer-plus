@@ -1,14 +1,9 @@
 <template>
   <el-main>
-    <el-menu :router="true" mode="horizontal">
-      <el-menu-item index="/">
-        <router-link to="/">Home</router-link>
-      </el-menu-item>
-      <el-menu-item index="/about">
-        <router-link to="/about">About</router-link>
-      </el-menu-item>
-    </el-menu>
-    <router-view></router-view>
+    <div class="flex main-container">
+      <SideBar />
+      <router-view></router-view>
+    </div>
   </el-main>
 </template>
 
