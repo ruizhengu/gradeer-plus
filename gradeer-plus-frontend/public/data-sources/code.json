@@ -1,0 +1,3 @@
+{
+  "data": "public static void main(String[] args) {\n    Pattern textPattern = Pattern.compile(\"text\\((.*)\\)\");\n      String selector = \"text(hello)\";\n      Matcher matcher = textPattern.matcher(selector);\n    if (matcher.matches()) {\n        System.out.println(matcher.group(1));\n    }\n  }"
+}
