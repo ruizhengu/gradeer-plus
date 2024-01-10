@@ -4,91 +4,73 @@ import { mdiBallotOutline, mdiUpload, mdiPlus, mdiDelete } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
-import FormCheckRadioGroup from '@/components/FormCheckRadioGroup.vue'
-import FormFilePicker from '@/components/FormFilePicker.vue'
 import FormField from '@/components/FormField.vue'
-import FormControl from '@/components/FormControl.vue'
-import BaseDivider from '@/components/BaseDivider.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
-import SectionTitle from '@/components/SectionTitle.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import NotificationBarInCard from '@/components/NotificationBarInCard.vue'
 
-// const typeOptions = [
-//   { id: 1, label: 'ManualCheck' },
-// ]
-
-const forms = reactive([{
-  type: 'ManualCheck',
-  name: 'Reporting quality (to console) of answers to the questions',
-  prompt: 'Reporting quality (to console) of answers to the questions:',
+const initalForm = () => ({
+  type: '',
+  name: '',
+  prompt: '',
   weight: 1,
   maxRange: 10,
   feedbackValues: [
-    { 'score': 1.0, 'feedback': 'Outstanding reporting of answers to questions to console with excellent formatting.' },
-    { 'score': 0.8, 'feedback': 'Good reporting of answers to the questions to console with some formatting issues.' },
-    { 'score': 0.5, 'feedback': 'Adequate reporting of answers to the questions to console but poor readability .' },
-    { 'score': 0.0, 'feedback': 'Poor (or no) reporting of answers to the questions to console.' }
+    { 'score': 1.0, 'feedback': '' },
+    { 'score': 0.8, 'feedback': '' },
+    { 'score': 0.5, 'feedback': '' },
+    { 'score': 0.0, 'feedback': '' }
   ],
   arbitraryFeedback: 'False',
-  priority: 38,
-  checkGroup: 'FD Reporting'
-}])
-
-const customElementsForm = reactive({
-  checkbox: ['lorem'],
-  radio: 'one',
-  switch: ['one'],
-  file: null
+  priority: 0,
+  checkGroup: ''
 })
+
+const forms = reactive([initalForm()])
 
 const submit = () => {
   //
 }
 
-const formStatusWithHeader = ref(true)
-
-const formStatusCurrent = ref(0)
-
-const formStatusOptions = ['info', 'success', 'danger', 'warning']
-
-const formStatusSubmit = () => {
-  formStatusCurrent.value = formStatusOptions[formStatusCurrent.value + 1]
-    ? formStatusCurrent.value + 1
-    : 0
+const fileInput = ref(null)
+const uploadFile = () => {
+  fileInput.value.click()
 }
 
-const uploadFile = () => {
-  console.log("upload file")
+const handleFile = (event) => {
+  const file = event.target.files[0];
+  if (file && file.type === "application/json") {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileContent = e.target.result;
+      try {
+        const jsonData = JSON.parse(fileContent)
+        forms.length = 0
+        jsonData.forEach(item => forms.push(item))
+      } catch (err) {
+        console.error("Error parsing JSON:", err);
+      }
+    }
+    reader.readAsText(file);
+  } else {
+    alert("Please upload a valid JSON file.")
+  }
 }
 
 const addCheck = () => {
-  forms.push({
-    type: '',
-    name: '',
-    prompt: '',
-    weight: 1,
-    maxRange: 10,
-    feedbackValues: [
-      { 'score': 1.0, 'feedback': '' },
-      { 'score': 0.8, 'feedback': '' },
-      { 'score': 0.5, 'feedback': '' },
-      { 'score': 0.0, 'feedback': '' }
-    ],
-    arbitraryFeedback: 'False',
-    priority: 0,
-    checkGroup: ''
-  })
+  forms.push(initalForm())
 }
 
 const deleteCheck = (index) => {
-  if (forms.length > 1) {
-    forms.splice(index, 1);
-  } else {
-    alert("You cannot delete the last form.");
-  }
+  if (forms.length > 1) forms.splice(index, 1);
+  else alert("You cannot delete the last form.");
+
+}
+
+const reset = () => {
+  forms.length = 0
+  forms.push(initalForm())
 }
 </script>
 
@@ -98,6 +80,7 @@ const deleteCheck = (index) => {
       <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Forms example" main>
         <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
           @click="uploadFile" />
+        <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
       </SectionTitleLineWithButton>
 
       <CardBox v-for="(form, index) in forms" :key="index" form @submit.prevent="submit">
@@ -155,7 +138,7 @@ const deleteCheck = (index) => {
 
       <BaseButtons class="mt-5">
         <BaseButton type="submit" color="info" label="Submit" />
-        <BaseButton type="reset" color="info" outline label="Reset" />
+        <BaseButton color="info" outline label="Reset" @click="reset" />
       </BaseButtons>
     </SectionMain>
   </LayoutAuthenticated>
