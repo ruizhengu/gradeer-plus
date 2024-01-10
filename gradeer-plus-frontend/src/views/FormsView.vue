@@ -82,6 +82,14 @@ const addCheck = () => {
     checkGroup: ''
   })
 }
+
+const deleteCheck = (index) => {
+  if (forms.length > 1) {
+    forms.splice(index, 1);
+  } else {
+    alert("You cannot delete the last form.");
+  }
+}
 </script>
 
 <template>
@@ -140,7 +148,7 @@ const addCheck = () => {
           <input v-model="form.checkGroup" class="p-2 border rounded flex-grow-0 w-1/3" />
           <div class="ml-auto">
             <BaseButton v-if="index == forms.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
-            <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" />
+            <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
           </div>
         </div>
       </CardBox>
