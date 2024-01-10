@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue'
-import { mdiBallotOutline, mdiAccount, mdiMail, mdiUpload } from '@mdi/js'
+import { mdiBallotOutline, mdiAccount, mdiUpload, mdiPlus, mdiDelete } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
@@ -119,6 +119,11 @@ const uploadFile = () => {
           <label class="font-bold flex-grow-0 w-1/6">Check Group</label>
           <input v-model="form.checkGroup" class="p-2 border rounded flex-grow-0 w-1/3" />
         </div>
+
+        <BaseButtons>
+          <BaseButton color="success" label="Add" :icon="mdiPlus" />
+          <BaseButton color="danger" label="Delete" :icon="mdiDelete" />
+        </BaseButtons>
 
         <template #footer>
           <BaseButtons>

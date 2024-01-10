@@ -60,12 +60,12 @@ export default [
       }
     ]
   },
-  {
-    icon: mdiThemeLightDark,
-    label: 'Light/Dark',
-    isDesktopNoLabel: true,
-    isToggleLightDark: true
-  },
+  // {
+  //   icon: mdiThemeLightDark,
+  //   label: 'Light/Dark',
+  //   isDesktopNoLabel: true,
+  //   isToggleLightDark: true
+  // },
   // {
   //   icon: mdiGithub,
   //   label: 'GitHub',
