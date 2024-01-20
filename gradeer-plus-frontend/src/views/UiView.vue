@@ -109,8 +109,8 @@ const updateMark = (index) => {
 
 <template>
   <LayoutAuthenticated>
-    <div class="flex">
-      <div class="flex flex-col flex-1">
+    <div class="flex h-screen overflow-hidden">
+      <div class="flex flex-col flex-1 overflow-y-auto">
         <div v-for="(form, index) in forms" :key="index" class="container mx-auto p-4">
           <h2 class="text-2xl font-bold mb-4">{{ form.prompt }}</h2>
           <div v-for="(feedbacks, indexFeedback) in form.feedbackValues" :key="indexFeedback" class="mb-6">
@@ -125,7 +125,9 @@ const updateMark = (index) => {
           </div>
         </div>
       </div>
-      <CodeInspector class="flex-1" />
+      <div class="flex-1 overflow-y-auto">
+        <CodeInspector class="flex-1" />
+      </div>
     </div>
   </LayoutAuthenticated>
 </template>
