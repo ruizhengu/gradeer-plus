@@ -64,6 +64,17 @@ const checked = (isChecked, client) => {
     checkedRows.value = remove(checkedRows.value, (row) => row.id === client.id)
   }
 }
+
+const statusClass = (status) => {
+  switch (status) {
+    case 'Done':
+      return 'block w-full py-2 px-3 border border-gray-300 bg-green-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
+    case 'Not Started':
+      return 'block w-full py-2 px-3 border border-gray-300 bg-red-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
+    case 'In Progress':
+      return 'block w-full py-2 px-3 border border-gray-300 bg-yellow-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
+  }
+}
 </script>
 
 <template>
@@ -80,11 +91,9 @@ const checked = (isChecked, client) => {
   <table>
     <thead>
       <tr>
-        <!-- <th v-if="checkable" /> -->
-        <!-- <th /> -->
         <th>Module</th>
         <th>Year</th>
-        <th>Assignment</th>
+        <th>Name</th>
         <th>Status</th>
         <th>Progress</th>
         <th />
@@ -92,25 +101,21 @@ const checked = (isChecked, client) => {
     </thead>
     <tbody>
       <tr v-for="client in itemsPaginated" :key="client.id">
-        <!-- <TableCheckboxCell v-if="checkable" @checked="checked($event, client)" /> -->
-        <!-- <td class="border-b-0 lg:w-6 before:hidden">
-          <UserAvatar :username="client.name" class="w-24 h-24 mx-auto lg:w-6 lg:h-6" />
-        </td> -->
         <td data-label="Module">
           {{ client.module }}
         </td>
         <td data-label="Year">
           {{ client.year }}
         </td>
-        <td data-label="Assignment">
+        <td data-label="Name">
           {{ client.assignment }}
         </td>
-        <!-- <td data-label="Status" class="lg:w-1 whitespace-nowrap"> -->
         <td data-label="Status">
-          <!-- <small class="text-gray-500 dark:text-slate-400" :title="client.created">{{
-            client.created
-          }}</small> -->
-          {{ client.status }}
+          <select v-model="client.status" :class="statusClass(client.status)">
+            <option value="Done">Done</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+          </select>
         </td>
         <td data-label="Progress" class="lg:w-32">
           <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="client.progress">
