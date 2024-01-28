@@ -1,4 +1,11 @@
 package com.gradeerplus.backend.service;
 
-public class AssignmentService {
+import com.gradeerplus.backend.entity.Assignment;
+
+import java.util.List;
+
+public interface AssignmentService {
+    List<Assignment> listAll();
+
+    Assignment findById(Integer id);
 }
