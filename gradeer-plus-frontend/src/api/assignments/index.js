@@ -1,9 +1,13 @@
-// import request from '@/axios'
 import axios from 'axios'
 
-export const getAllAssignments = () => {  
-  // return request.get({ url: 'http://localhost:8080/assignments' })
-  axios.get('http://localhost:8080/assignments').then(response => {
-    console.log(response)
-  })
+export const getAllAssignments = async () => {  
+  try {
+    return await axios.get('http://localhost:8080/assignments').then(response => response.data)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
 }

@@ -1,21 +1,17 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useMainStore } from '@/stores/main'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 import CardBoxModal from '@/components/CardBoxModal.vue'
-import TableCheckboxCell from '@/components/TableCheckboxCell.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import UserAvatar from '@/components/UserAvatar.vue'
+import { getAllAssignments } from '@/api/assignments'
 
-defineProps({
-  checkable: Boolean
+const assignments = ref([])
+
+getAllAssignments().then(response => {
+  assignments.value = response
 })
-
-const mainStore = useMainStore()
-
-const items = computed(() => mainStore.clients)
 
 const isModalActive = ref(false)
 
@@ -25,13 +21,11 @@ const perPage = ref(5)
 
 const currentPage = ref(0)
 
-const checkedRows = ref([])
-
-const itemsPaginated = computed(() =>
-  items.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
+const assignmentPaginated = computed(() =>
+  assignments.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
 )
 
-const numPages = computed(() => Math.ceil(items.value.length / perPage.value))
+const numPages = computed(() => Math.ceil(assignments.value.length / perPage.value))
 
 const currentPageHuman = computed(() => currentPage.value + 1)
 
@@ -44,26 +38,6 @@ const pagesList = computed(() => {
 
   return pagesList
 })
-
-const remove = (arr, cb) => {
-  const newArr = []
-
-  arr.forEach((item) => {
-    if (!cb(item)) {
-      newArr.push(item)
-    }
-  })
-
-  return newArr
-}
-
-const checked = (isChecked, client) => {
-  if (isChecked) {
-    checkedRows.value.push(client)
-  } else {
-    checkedRows.value = remove(checkedRows.value, (row) => row.id === client.id)
-  }
-}
 
 const statusClass = (status) => {
   switch (status) {
@@ -91,35 +65,35 @@ const statusClass = (status) => {
   <table>
     <thead>
       <tr>
-        <th>Module</th>
-        <th>Year</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Progress</th>
+        <th class="text-center">Module</th>
+        <th class="text-center">Year</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Progress</th>
         <th />
       </tr>
     </thead>
     <tbody>
-      <tr v-for="client in itemsPaginated" :key="client.id">
-        <td data-label="Module">
-          {{ client.module }}
+      <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
+        <td data-label="Module" class="text-center">
+          {{ assignment.module }}
         </td>
-        <td data-label="Year">
-          {{ client.year }}
+        <td data-label="Year" class="text-center">
+          {{ assignment.year }}
         </td>
-        <td data-label="Name">
-          {{ client.assignment }}
+        <td data-label="Name" class="text-center">
+          {{ assignment.name }}
         </td>
         <td data-label="Status">
-          <select v-model="client.status" :class="statusClass(client.status)">
+          <select v-model="assignment.status" :class="statusClass(assignment.status)">
             <option value="Done">Done</option>
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
           </select>
         </td>
         <td data-label="Progress" class="lg:w-32">
-          <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="client.progress">
-            {{ client.progress }}
+          <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
+            {{ assignment.progress }}
           </progress>
         </td>
 

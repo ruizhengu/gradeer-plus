@@ -1,23 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
+import Assignment from '@/views/AssignmentsView.vue'
+import Form from '@/views/FormsView.vue'
+import Ui from '@/views/UiView.vue'
 
 const routes = [
-  // {
-  //   meta: {
-  //     title: 'Select style'
-  //   },
-  //   path: '/',
-  //   name: 'style',
-  //   component: Style
-  // },
   {
-    // Document title tag
-    // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
-    // meta: {
-    //   title: 'Home'
-    // },
-    route: "/",
+    meta: {
+      title: 'Home'
+    },
+    path: "/",
     name: 'home',
     component: Home
   },
@@ -27,7 +20,7 @@ const routes = [
     },
     path: '/assignments',
     name: 'assignments',
-    component: () => import('@/views/AssignmentsView.vue')
+    component: Assignment
   },
   {
     meta: {
@@ -35,7 +28,7 @@ const routes = [
     },
     path: '/forms',
     name: 'forms',
-    component: () => import('@/views/FormsView.vue')
+    component: Form
   },
   {
     meta: {
@@ -51,7 +44,7 @@ const routes = [
     },
     path: '/ui',
     name: 'ui',
-    component: () => import('@/views/UiView.vue')
+    component: Ui
   },
   {
     meta: {
