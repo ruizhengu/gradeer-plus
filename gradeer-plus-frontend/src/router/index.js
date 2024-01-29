@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 
@@ -14,12 +14,12 @@ const routes = [
   {
     // Document title tag
     // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
-    meta: {
-      title: 'Home'
-    },
-    path: '/',
+    // meta: {
+    //   title: 'Home'
+    // },
+    route: "/",
     name: 'home',
-    component: () => import('@/views/HomeView.vue')
+    component: Home
   },
   {
     meta: {
@@ -80,11 +80,11 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    return savedPosition || { top: 0 }
-  }
+  // scrollBehavior(to, from, savedPosition) {
+  //   return savedPosition || { top: 0 }
+  // }
 })
 
 export default router

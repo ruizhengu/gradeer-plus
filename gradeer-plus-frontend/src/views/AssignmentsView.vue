@@ -8,6 +8,10 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import CardBoxComponentEmpty from '@/components/CardBoxComponentEmpty.vue'
+import { getAllAssignments } from '@/api/assignments'
+
+getAllAssignments()
+// console.log(assignments)
 </script>
 
 <template>
