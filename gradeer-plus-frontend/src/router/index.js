@@ -4,6 +4,7 @@ import Home from '@/views/HomeView.vue'
 import Assignment from '@/views/AssignmentsView.vue'
 import Form from '@/views/FormsView.vue'
 import Ui from '@/views/UiView.vue'
+import Check from '@/views/CheckView.vue'
 
 const routes = [
   {
@@ -21,6 +22,12 @@ const routes = [
     path: '/assignments',
     name: 'assignments',
     component: Assignment
+  },
+  {
+    path: '/check/:id',
+    name: 'Check',
+    component: Check,
+    props: true
   },
   {
     meta: {

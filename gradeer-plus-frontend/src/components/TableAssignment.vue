@@ -6,6 +6,10 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { getAllAssignments } from '@/api/assignments'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 const assignments = ref([])
 
@@ -49,14 +53,13 @@ const statusClass = (status) => {
       return 'block w-full py-2 px-3 border border-gray-300 bg-yellow-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
   }
 }
+
+const editAssignmentCheck = (id) => {
+  router.push({ name: 'Check', params: { id: id } })
+}
 </script>
 
 <template>
-  <CardBoxModal v-model="isModalActive" title="Sample modal">
-    <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-    <p>This is sample modal</p>
-  </CardBoxModal>
-
   <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
     <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
     <p>This is sample modal</p>
@@ -99,7 +102,7 @@ const statusClass = (status) => {
 
         <td class="before:hidden lg:w-1 whitespace-nowrap">
           <BaseButtons type="justify-start lg:justify-end" no-wrap>
-            <BaseButton color="info" :icon="mdiEye" small @click="isModalActive = true" />
+            <BaseButton color="info" :icon="mdiEye" small @click=editAssignmentCheck(assignment.id) />
             <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />
           </BaseButtons>
         </td>
