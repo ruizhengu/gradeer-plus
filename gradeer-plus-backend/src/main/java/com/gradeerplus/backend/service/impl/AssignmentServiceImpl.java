@@ -27,4 +27,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     public String findCheckById(Integer id) {
         return assignmentRepository.findCheckById(id);
     }
+
+    @Override
+    public void updateCheckById(Integer id, String check) {
+        assignmentRepository.updateCheckById(id, check);
+    }
 }

@@ -10,4 +10,6 @@ public interface AssignmentService {
     Assignment findById(Integer id);
 
     String findCheckById(Integer id);
+
+    void updateCheckById(Integer id, String check);
 }

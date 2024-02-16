@@ -5,19 +5,18 @@ import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getAllAssignments } from '@/api/assignments'
-import { useRouter, useRoute } from 'vue-router'
+import { listAll } from '@/api/assignments'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 
 const assignments = ref([])
 
-getAllAssignments().then(response => {
+listAll().then(response => {
   assignments.value = response
 })
 
-const isModalActive = ref(false)
+// const isModalActive = ref(false)
 
 const isModalDangerActive = ref(false)
 

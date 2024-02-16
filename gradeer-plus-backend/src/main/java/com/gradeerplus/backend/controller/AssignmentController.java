@@ -5,10 +5,7 @@ import com.gradeerplus.backend.repository.AssignmentRepository;
 import com.gradeerplus.backend.service.AssignmentService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
 import java.util.List;
@@ -28,5 +25,11 @@ public class AssignmentController {
     @GetMapping("/{id}/check")
     public String getCheckById(@PathVariable int id) throws Exception {
         return assignmentService.findCheckById(id);
+    }
+
+    @PostMapping("/{id}/check")
+    public String updateCheckById(@PathVariable int id, String check) {
+        assignmentService.updateCheckById(id, check);
+        return check;
     }
 }

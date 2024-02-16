@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 import Assignment from '@/views/AssignmentsView.vue'
-import Form from '@/views/FormsView.vue'
 import Ui from '@/views/UiView.vue'
 import Check from '@/views/CheckView.vue'
 
@@ -21,21 +20,13 @@ const routes = [
     },
     path: '/assignments',
     name: 'assignments',
-    component: Assignment
+    component: Assignment,
   },
   {
-    path: '/check/:id',
+    path: '/assignments/:id/check',
     name: 'Check',
     component: Check,
-    props: true
-  },
-  {
-    meta: {
-      title: 'Forms'
-    },
-    path: '/forms',
-    name: 'forms',
-    component: Form
+    props: true 
   },
   {
     meta: {
