@@ -8,4 +8,6 @@ public interface AssignmentService {
     List<Assignment> listAll();
 
     Assignment findById(Integer id);
+
+    String findCheckById(Integer id);
 }

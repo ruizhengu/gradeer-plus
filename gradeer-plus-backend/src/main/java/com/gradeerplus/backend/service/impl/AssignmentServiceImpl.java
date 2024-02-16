@@ -15,11 +15,16 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public List<Assignment> listAll() {
-        return assignmentRepository.findAll();
+        return assignmentRepository.getAllAssignments();
     }
 
     @Override
     public Assignment findById(Integer id) {
         return null;
+    }
+
+    @Override
+    public String findCheckById(Integer id) {
+        return assignmentRepository.findCheckById(id);
     }
 }

@@ -1,9 +1,8 @@
 package com.gradeerplus.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "ASSIGNMENTS")
@@ -21,6 +20,10 @@ public class Assignment {
     private String status;
 
     private Integer progress;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private String check;
 
     public Integer getId() {
         return id;
@@ -68,6 +71,14 @@ public class Assignment {
 
     public void setProgress(Integer progress) {
         this.progress = progress;
+    }
+
+    public String getCheck() {
+        return check;
+    }
+
+    public void setCheck(String check) {
+        this.check = check;
     }
 
     @Override
