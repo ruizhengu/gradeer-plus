@@ -22,13 +22,13 @@ public class AssignmentController {
         return assignmentService.listAll();
     }
 
-    @GetMapping("/{id}/check")
-    public String getCheckById(@PathVariable int id) throws Exception {
+    @GetMapping("/check")
+    public String getCheckById(@RequestParam int id) throws Exception {
         return assignmentService.findCheckById(id);
     }
 
-    @PostMapping("/{id}/check")
-    public String updateCheckById(@PathVariable int id, String check) {
+    @PostMapping("/check")
+    public String updateCheckById(@RequestParam int id, @RequestHeader("Check") String check) {
         assignmentService.updateCheckById(id, check);
         return check;
     }

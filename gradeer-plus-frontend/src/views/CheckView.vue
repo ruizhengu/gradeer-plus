@@ -10,11 +10,12 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { getCheckById, updateCheckById } from '@/api/assignments'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
-const props = defineProps(['id'])
+const route = useRoute()
+const id = route.query.id
 
-const initalForm = () => ({
+const initalForm = {
   type: '',
   name: '',
   prompt: '',
@@ -29,21 +30,21 @@ const initalForm = () => ({
   arbitraryFeedback: 'False',
   priority: 0,
   checkGroup: ''
+}
+
+const checks = reactive([initalForm])
+
+getCheckById(id).then(response => {
+  try {
+    checks.value = JSON.parse(JSON.stringify(response));
+  } catch (error) {
+    checks.value = [initalForm]
+  }
 })
-
-const check = ref([])
-
-getCheckById(Number(props.id)).then(response => {
-  check.value = response
-})
-
-const forms = reactive([initalForm()])
 
 const submit = () => {
-  console.log(forms)
-  console.log(JSON.stringify(forms))
 
-  updateCheckById(Number(props.id), JSON.stringify(forms)).then(response => {
+  updateCheckById(id, JSON.stringify(checks.value)).then(response => {
     console.log(response)
   })
 }
@@ -61,8 +62,8 @@ const handleFile = (event) => {
       const fileContent = e.target.result;
       try {
         const jsonData = JSON.parse(fileContent)
-        forms.length = 0
-        jsonData.forEach(item => forms.push(item))
+        checks.value.length = 0
+        jsonData.forEach(item => checks.value.push(item))
       } catch (err) {
         console.error("Error parsing JSON:", err);
       }
@@ -74,18 +75,19 @@ const handleFile = (event) => {
 }
 
 const addCheck = () => {
-  forms.push(initalForm())
+  checks.value.push(initalForm)
+  console.log(checks)
 }
 
 const deleteCheck = (index) => {
-  if (forms.length > 1) forms.splice(index, 1);
+  if (checks.value.length > 1) checks.value.splice(index, 1);
   else alert("You cannot delete the last form.");
 
 }
 
 const reset = () => {
-  forms.length = 0
-  forms.push(initalForm())
+  checks.value.length = 0
+  checks.value.push(initalForm)
 }
 
 const router = useRouter()
@@ -98,32 +100,32 @@ const back = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Forms example" main>
+      <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Checks example" main>
         <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
           @click="uploadFile" />
         <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
       </SectionTitleLineWithButton>
 
-      <CardBox v-for="(form, index) in forms" :key="index" form @submit.prevent="submit">
+      <CardBox v-for="(check, index) in checks.value" :key="index" check @submit.prevent="submit">
         <CardBoxComponentTitle :title="'Check ' + (index + 1)" />
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Type</label>
-          <input v-model="form.type" class="p-2 border rounded flex-grow-0 w-1/3" />
+          <input v-model="check.type" class="p-2 border rounded flex-grow-0 w-1/3" />
         </div>
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Name</label>
-          <input v-model="form.name" class="p-2 border rounded flex-grow-0 w-5/6" />
+          <input v-model="check.name" class="p-2 border rounded flex-grow-0 w-5/6" />
         </div>
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Prompt</label>
-          <input v-model="form.prompt" class="p-2 border rounded flex-grow-0 w-5/6" />
+          <input v-model="check.prompt" class="p-2 border rounded flex-grow-0 w-5/6" />
         </div>
 
         <FormField label="Feedback Values">
-          <div v-for="(item, id) in form.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
+          <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
             <div class="flex flex-row items-center mb-2">
               <label for="score-{{ id }}" class="font-semibold flex-grow-0 w-1/6">Score</label>
               <input id="score-{{ id }}" v-model="item.score" type="number" step="0.1" min="0" max="1"
@@ -139,19 +141,19 @@ const back = () => {
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Arbitrary Feedback</label>
-          <input v-model="form.arbitraryFeedback" class="p-2 border rounded flex-grow-0 w-1/3" />
+          <input v-model="check.arbitraryFeedback" class="p-2 border rounded flex-grow-0 w-1/3" />
         </div>
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Priority</label>
-          <input v-model="form.priority" class="p-2 border rounded flex-grow-0 w-1/3" />
+          <input v-model="check.priority" class="p-2 border rounded flex-grow-0 w-1/3" />
         </div>
 
         <div class="flex flex-row items-center mb-2">
           <label class="font-bold flex-grow-0 w-1/6">Check Group</label>
-          <input v-model="form.checkGroup" class="p-2 border rounded flex-grow-0 w-1/3" />
+          <input v-model="check.checkGroup" class="p-2 border rounded flex-grow-0 w-1/3" />
           <div class="ml-auto">
-            <BaseButton v-if="index == forms.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
+            <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
             <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
           </div>
         </div>

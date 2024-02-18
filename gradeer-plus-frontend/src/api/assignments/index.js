@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const listAll = async () => {  
+export const listAll = async () => {
   try {
     return await axios.get('http://localhost:8080/assignments').then(response => response.data)
   } catch (error) {
@@ -12,9 +12,12 @@ export const listAll = async () => {
   }
 }
 
-export const getCheckById = async (id) => {  
+export const getCheckById = async (id) => {
   try {
-    return await axios.get(`http://localhost:8080/assignments/${id}/check`).then(response => response.data)
+    const params = {
+      id: id
+    }
+    return await axios.get('http://localhost:8080/assignments/check', { params }).then(response => response.data)
   } catch (error) {
     throw {
       code: error.code,
@@ -24,17 +27,16 @@ export const getCheckById = async (id) => {
   }
 }
 
-export const updateCheckById = async (id, check) => {  
+export const updateCheckById = async (id, check) => {
   try {
-    const data = {
-      "id": id,
-      "check": check
+    const params = {
+      id: id
     }
-    console.log(data)
-    return await axios.post(`http://localhost:8080/assignments/${id}/check`, {},
-    {
-      params: data
-    }).then(response => response.data)
+    const headers = {
+      'Content-Type': 'application/json',
+      'Check': check,
+    };
+    return await axios.post(`http://localhost:8080/assignments/check?id=${id}`, params, { headers }).then(response => response.data)
   } catch (error) {
     throw {
       code: error.code,

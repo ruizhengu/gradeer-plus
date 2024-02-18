@@ -54,7 +54,7 @@ const statusClass = (status) => {
 }
 
 const editAssignmentCheck = (id) => {
-  router.push({ name: 'Check', params: { id: id } })
+  router.push({ name: 'Check', query: { id: id } })
 }
 </script>
 

@@ -24,11 +24,11 @@ export default [
     label: 'Assignments',
     icon: mdiTable
   },
-  {
-    to: '/forms',
-    label: 'Forms',
-    icon: mdiSquareEditOutline
-  },
+  // {
+  //   to: '/check',
+  //   label: 'Check',
+  //   icon: mdiSquareEditOutline
+  // },
   {
     to: '/ui',
     label: 'UI',

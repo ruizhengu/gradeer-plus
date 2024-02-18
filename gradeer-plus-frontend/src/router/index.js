@@ -23,10 +23,10 @@ const routes = [
     component: Assignment,
   },
   {
-    path: '/assignments/:id/check',
+    path: '/assignments/check',
     name: 'Check',
     component: Check,
-    props: true 
+    props: true
   },
   {
     meta: {
