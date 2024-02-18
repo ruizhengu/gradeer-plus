@@ -53,68 +53,71 @@ const statusClass = (status) => {
   }
 }
 
-const editAssignmentCheck = (id) => {
-  router.push({ name: 'Check', query: { id: id } })
+const editAssignmentCheck = (id, module, name) => {
+  router.push({ name: 'Check', query: { id: id, module: module, name: name } })
 }
 </script>
 
 <template>
-  <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
-    <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-    <p>This is sample modal</p>
-  </CardBoxModal>
+  <div>
+    <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
+      <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
+      <p>This is sample modal</p>
+    </CardBoxModal>
 
-  <table>
-    <thead>
-      <tr>
-        <th class="text-center">Module</th>
-        <th class="text-center">Year</th>
-        <th class="text-center">Name</th>
-        <th class="text-center">Status</th>
-        <th class="text-center">Progress</th>
-        <th />
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
-        <td data-label="Module" class="text-center">
-          {{ assignment.module }}
-        </td>
-        <td data-label="Year" class="text-center">
-          {{ assignment.year }}
-        </td>
-        <td data-label="Name" class="text-center">
-          {{ assignment.name }}
-        </td>
-        <td data-label="Status">
-          <select v-model="assignment.status" :class="statusClass(assignment.status)">
-            <option value="Done">Done</option>
-            <option value="Not Started">Not Started</option>
-            <option value="In Progress">In Progress</option>
-          </select>
-        </td>
-        <td data-label="Progress" class="lg:w-32">
-          <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
-            {{ assignment.progress }}
-          </progress>
-        </td>
+    <table>
+      <thead>
+        <tr>
+          <th class="text-center">Module</th>
+          <th class="text-center">Year</th>
+          <th class="text-center">Name</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Progress</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
+          <td data-label="Module" class="text-center">
+            {{ assignment.module }}
+          </td>
+          <td data-label="Year" class="text-center">
+            {{ assignment.year }}
+          </td>
+          <td data-label="Name" class="text-center">
+            {{ assignment.name }}
+          </td>
+          <td data-label="Status">
+            <select v-model="assignment.status" :class="statusClass(assignment.status)">
+              <option value="Done">Done</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+            </select>
+          </td>
+          <td data-label="Progress" class="lg:w-32">
+            <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
+              {{ assignment.progress }}
+            </progress>
+          </td>
 
-        <td class="before:hidden lg:w-1 whitespace-nowrap">
-          <BaseButtons type="justify-start lg:justify-end" no-wrap>
-            <BaseButton color="info" :icon="mdiEye" small @click=editAssignmentCheck(assignment.id) />
-            <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />
-          </BaseButtons>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-    <BaseLevel>
-      <BaseButtons>
-        <BaseButton v-for="page in pagesList" :key="page" :active="page === currentPage" :label="page + 1"
-          :color="page === currentPage ? 'lightDark' : 'whiteDark'" small @click="currentPage = page" />
-      </BaseButtons>
-      <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
-    </BaseLevel>
+          <td class="before:hidden lg:w-1 whitespace-nowrap">
+            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+              <BaseButton color="info" :icon="mdiEye"
+                @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
+              <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />
+            </BaseButtons>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+      <BaseLevel>
+        <BaseButtons>
+          <BaseButton v-for="page in pagesList" :key="page" :active="page === currentPage" :label="page + 1"
+            :color="page === currentPage ? 'lightDark' : 'whiteDark'" small @click="currentPage = page" />
+        </BaseButtons>
+        <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
+      </BaseLevel>
+    </div>
   </div>
 </template>

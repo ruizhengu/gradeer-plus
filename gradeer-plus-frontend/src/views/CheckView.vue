@@ -14,6 +14,8 @@ import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
 const id = route.query.id
+const module = route.query.module
+const name = route.query.name
 
 const initalForm = {
   type: '',
@@ -100,7 +102,7 @@ const back = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Checks example" main>
+      <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="`Checks - ${module} - ${name}`" main>
         <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
           @click="uploadFile" />
         <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
