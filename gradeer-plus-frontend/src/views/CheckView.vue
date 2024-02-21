@@ -5,6 +5,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
 import FormField from '@/components/FormField.vue'
+import FormHolder from '@/components/FormHolder.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
@@ -111,22 +112,11 @@ const back = () => {
       <CardBox v-for="(check, index) in checks.value" :key="index" check @submit.prevent="submit">
         <CardBoxComponentTitle :title="'Check ' + (index + 1)" />
 
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Type</label>
-          <input v-model="check.type" class="p-2 border rounded flex-grow-0 w-1/3" />
-        </div>
+        <FormField :id="`type-${index}`" v-model="check.type" label="Type" />
+        <FormField :id="`name-${index}`" v-model="check.name" label="Name" input-width="5/6" />
+        <FormField :id="`prompt-${index}`" v-model="check.prompt" label="Prompt" input-width="5/6" />
 
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Name</label>
-          <input v-model="check.name" class="p-2 border rounded flex-grow-0 w-5/6" />
-        </div>
-
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Prompt</label>
-          <input v-model="check.prompt" class="p-2 border rounded flex-grow-0 w-5/6" />
-        </div>
-
-        <FormField label="Feedback Values">
+        <FormHolder label="Feedback Values">
           <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
             <div class="flex flex-row items-center mb-2">
               <label for="score-{{ id }}" class="font-semibold flex-grow-0 w-1/6">Score</label>
@@ -139,26 +129,16 @@ const back = () => {
                 class="p-2 border rounded flex-grow-0 w-5/6" />
             </div>
           </div>
-        </FormField>
+        </FormHolder>
 
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Arbitrary Feedback</label>
-          <input v-model="check.arbitraryFeedback" class="p-2 border rounded flex-grow-0 w-1/3" />
-        </div>
+        <FormField v-model="check.arbitraryFeedback" label="Arbitrary Feedback" />
+        <FormField v-model="check.priority" label="Priority" />
+        <FormField v-model="check.checkGroup" label="Check Group" />
 
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Priority</label>
-          <input v-model="check.priority" class="p-2 border rounded flex-grow-0 w-1/3" />
-        </div>
-
-        <div class="flex flex-row items-center mb-2">
-          <label class="font-bold flex-grow-0 w-1/6">Check Group</label>
-          <input v-model="check.checkGroup" class="p-2 border rounded flex-grow-0 w-1/3" />
-          <div class="ml-auto">
-            <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
-            <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
-          </div>
-        </div>
+        <BaseButtons class="mt-5 flex">
+          <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
+          <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
+        </BaseButtons>
       </CardBox>
       <div class="flex justify-between mt-5">
         <BaseButtons class="mt-5">

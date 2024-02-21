@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { mdiEye, mdiTrashCan } from '@mdi/js'
+import { mdiEye, mdiTrashCan, mdiLocationEnter } from '@mdi/js'
 import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
@@ -56,6 +56,9 @@ const statusClass = (status) => {
 const editAssignmentCheck = (id, module, name) => {
   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
 }
+
+
+
 </script>
 
 <template>
@@ -102,6 +105,7 @@ const editAssignmentCheck = (id, module, name) => {
 
           <td class="before:hidden lg:w-1 whitespace-nowrap">
             <BaseButtons type="justify-start lg:justify-end" no-wrap>
+              <BaseButton color="success" :icon="mdiLocationEnter" small />
               <BaseButton color="info" :icon="mdiEye"
                 @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
               <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />

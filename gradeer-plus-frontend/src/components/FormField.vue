@@ -1,47 +1,42 @@
 <script setup>
-import { computed, useSlots } from 'vue'
+import { defineEmits } from 'vue'
 
 defineProps({
   label: {
     type: String,
     default: null
   },
-  labelFor: {
-    type: String,
+  modelValue: {
+    type: [String, Number, Boolean],
     default: null
   },
-  help: {
+  labelWidth: {
     type: String,
-    default: null
-  }
+    default: '1/6'
+  },
+  inputWidth: {
+    type: String,
+    default: '1/3'
+  },
+  type: {
+    type: String,
+    default: 'text'
+  },
+  id: String
 })
 
-const slots = useSlots()
+const emit = defineEmits(['update:modelValue']);
 
-const wrapperClass = computed(() => {
-  const base = []
-  const slotsLength = slots.default().length
+const updateValue = (event) => {
+  emit('update:modelValue', event.target.value);
+};
 
-  if (slotsLength > 1) {
-    base.push('grid grid-cols-1 gap-3')
-  }
-
-  if (slotsLength === 2) {
-    base.push('md:grid-cols-2')
-  }
-
-  return base
-})
 </script>
 
 <template>
-  <div class="mb-6 last:mb-0">
-    <label v-if="label" :for="labelFor" class="block font-bold mb-2">{{ label }}</label>
-    <div :class="wrapperClass">
-      <slot />
-    </div>
-    <div v-if="help" class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-      {{ help }}
-    </div>
+  <div class="flex flex-row items-center mb-2">
+    <label :class="`font-bold flex-grow-0 w-${labelWidth}`">{{ label }}</label>
+    <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow-0 w-${inputWidth}`"
+      @input="updateValue" />
   </div>
 </template>
