@@ -1,26 +1,27 @@
 <script setup>
-import { mdiCalendarCheck } from '@mdi/js'
+import { mdiBookAccountOutline } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 // import NotificationBar from '@/components/NotificationBar.vue'
 // import TableAssignment from '@/components/TableAssignment.vue'
 import { mdiEye, mdiTrashCan, mdiLocationEnter } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
-import CardBoxModal from '@/components/CardBoxModal.vue'
+// import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { computed, ref } from 'vue'
-import { listAll } from '@/api/assignments'
-import { useRouter } from 'vue-router'
+import { getAllSubmissionByAssignment } from '@/api/submissions'
+import { useRoute } from 'vue-router'
 
-const router = useRouter()
+const route = useRoute()
+const id = route.query.id
 
-const assignments = ref([])
+const submissions = ref([])
 
-listAll().then(response => {
-  assignments.value = response
+getAllSubmissionByAssignment(id).then(response => {
+  submissions.value = response
 })
 
 // const isModalActive = ref(false)
@@ -31,11 +32,11 @@ const perPage = ref(5)
 
 const currentPage = ref(0)
 
-const assignmentPaginated = computed(() =>
-  assignments.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
+const submissionPaginated = computed(() =>
+  submissions.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
 )
 
-const numPages = computed(() => Math.ceil(assignments.value.length / perPage.value))
+const numPages = computed(() => Math.ceil(submissions.value.length / perPage.value))
 
 const currentPageHuman = computed(() => currentPage.value + 1)
 
@@ -60,73 +61,43 @@ const statusClass = (status) => {
   }
 }
 
-const editAssignmentCheck = (id, module, name) => {
-  router.push({ name: 'Check', query: { id: id, module: module, name: name } })
-}
-
-const enterAssignmentSubmissions = (id) => {
-  router.push({ name: 'Submission', query: { id: id } })
-}
-
+// const editAssignmentCheck = (id, module, name) => {
+//   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
+// }
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiCalendarCheck" title="Assignments" main>
+      <SectionTitleLineWithButton :icon="mdiBookAccountOutline" title="Submissions" main>
       </SectionTitleLineWithButton>
 
       <CardBox class="mb-6" has-table>
-        <!-- <TableAssignment checkable /> -->
         <div>
-          <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
+          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
             <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
             <p>This is sample modal</p>
-          </CardBoxModal>
+          </CardBoxModal> -->
 
           <table>
             <thead>
               <tr>
-                <th class="text-center">Module</th>
-                <th class="text-center">Year</th>
-                <th class="text-center">Name</th>
+                <th class="text-center">Student</th>
                 <th class="text-center">Status</th>
-                <th class="text-center">Progress</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
+              <tr v-for="submission in submissionPaginated" :key="submission.id">
                 <td data-label="Module" class="text-center">
-                  {{ assignment.module }}
-                </td>
-                <td data-label="Year" class="text-center">
-                  {{ assignment.year }}
-                </td>
-                <td data-label="Name" class="text-center">
-                  {{ assignment.name }}
+                  {{ submission.student }}
                 </td>
                 <td data-label="Status">
-                  <select v-model="assignment.status" :class="statusClass(assignment.status)">
+                  <select v-model="submission.status" :class="statusClass(submission.status)">
                     <option value="Done">Done</option>
                     <option value="Not Started">Not Started</option>
                     <option value="In Progress">In Progress</option>
                   </select>
-                </td>
-                <td data-label="Progress" class="lg:w-32">
-                  <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
-                    {{ assignment.progress }}
-                  </progress>
-                </td>
-
-                <td class="before:hidden lg:w-1 whitespace-nowrap">
-                  <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="success" :icon="mdiLocationEnter" small
-                      @click="enterAssignmentSubmissions(assignment.id)" />
-                    <BaseButton color="info" :icon="mdiEye"
-                      @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
-                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />
-                  </BaseButtons>
                 </td>
               </tr>
             </tbody>

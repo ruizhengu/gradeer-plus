@@ -16,6 +16,7 @@ public class Submission {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
 
+    private String status;
     private String code;
 
     public Long getId() {
@@ -40,6 +41,14 @@ public class Submission {
 
     public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCode() {

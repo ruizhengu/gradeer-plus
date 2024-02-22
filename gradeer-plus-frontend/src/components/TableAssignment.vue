@@ -57,7 +57,9 @@ const editAssignmentCheck = (id, module, name) => {
   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
 }
 
-
+const enterAssignmentSubmissions = (id) => {
+  router.push({ name: 'Submission', query: { id: id } })
+}
 
 </script>
 
@@ -105,7 +107,8 @@ const editAssignmentCheck = (id, module, name) => {
 
           <td class="before:hidden lg:w-1 whitespace-nowrap">
             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-              <BaseButton color="success" :icon="mdiLocationEnter" small />
+              <BaseButton color="success" :icon="mdiLocationEnter" small
+                @click="enterAssignmentSubmissions(assignment.id)" />
               <BaseButton color="info" :icon="mdiEye"
                 @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
               <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />

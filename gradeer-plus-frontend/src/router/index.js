@@ -4,13 +4,14 @@ import Home from '@/views/HomeView.vue'
 import Assignment from '@/views/AssignmentsView.vue'
 import Ui from '@/views/UiView.vue'
 import Check from '@/views/CheckView.vue'
+import Submission from '@/views/SubmissionView.vue'
 
 const routes = [
   {
     meta: {
       title: 'Home'
     },
-    path: "/",
+    path: '/',
     name: 'home',
     component: Home
   },
@@ -27,6 +28,11 @@ const routes = [
     name: 'Check',
     component: Check,
     props: true
+  },
+  {
+    path: '/submission',
+    name: 'Submission',
+    component: Submission
   },
   {
     meta: {
