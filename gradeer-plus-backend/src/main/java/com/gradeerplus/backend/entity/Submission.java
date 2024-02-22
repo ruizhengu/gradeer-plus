@@ -1,5 +1,6 @@
 package com.gradeerplus.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +12,8 @@ public class Submission {
 
     private String student;
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignment_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
 
     private String code;

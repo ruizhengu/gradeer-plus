@@ -23,7 +23,7 @@ public class Assignment {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String check;
+    private String check_data;
 
     public Integer getId() {
         return id;
@@ -73,12 +73,12 @@ public class Assignment {
         this.progress = progress;
     }
 
-    public String getCheck() {
-        return check;
+    public String getCheckData() {
+        return check_data;
     }
 
-    public void setCheck(String check) {
-        this.check = check;
+    public void setCheckData(String check) {
+        this.check_data = check;
     }
 
     @Override
