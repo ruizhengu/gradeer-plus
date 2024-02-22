@@ -38,16 +38,15 @@ const initalForm = {
 const checks = reactive([initalForm])
 
 getCheckById(id).then(response => {
-  try {
-    checks.value = JSON.parse(JSON.stringify(response));
-  } catch (error) {
+  if (response.length != 0) {
+    checks.value = response
+  } else {
     checks.value = [initalForm]
   }
 })
 
 const submit = () => {
-
-  updateCheckById(id, JSON.stringify(checks.value)).then(response => {
+  updateCheckById(id, checks.value).then(response => {
     console.log(response)
   })
 }
@@ -118,16 +117,8 @@ const back = () => {
 
         <FormHolder label="Feedback Values">
           <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
-            <div class="flex flex-row items-center mb-2">
-              <label for="score-{{ id }}" class="font-semibold flex-grow-0 w-1/6">Score</label>
-              <input id="score-{{ id }}" v-model="item.score" type="number" step="0.1" min="0" max="1"
-                class="p-2 border rounded flex-grow-0 w-1/3" />
-            </div>
-            <div class="flex flex-row items-center mb-2">
-              <label for="feedback-{{ id }}" class="font-semibold flex-grow-0 w-1/6">Feedback</label>
-              <input id="feedback-{{ id }}" v-model="item.feedback" rows="1"
-                class="p-2 border rounded flex-grow-0 w-5/6" />
-            </div>
+            <FormField id="score-1" v-model="item.score" label="Score" type="number" step="0.1" min="0" max="1" />
+            <FormField id="score-1" v-model="item.feedback" label="Feedback" input-width="5/6" />
           </div>
         </FormHolder>
 
@@ -136,7 +127,8 @@ const back = () => {
         <FormField v-model="check.checkGroup" label="Check Group" />
 
         <BaseButtons class="mt-5 flex">
-          <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
+          <BaseButton v-if="index == checks.value.length - 1" color="success" label="Add" :icon="mdiPlus"
+            @click="addCheck" />
           <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
         </BaseButtons>
       </CardBox>

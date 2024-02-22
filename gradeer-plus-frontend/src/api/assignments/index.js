@@ -29,14 +29,10 @@ export const getCheckById = async (id) => {
 
 export const updateCheckById = async (id, check) => {
   try {
-    const params = {
-      id: id
-    }
     const headers = {
       'Content-Type': 'application/json',
-      'Check': check,
     };
-    return await axios.post(`http://localhost:8080/assignments/check?id=${id}`, params, { headers }).then(response => response.data)
+    return await axios.post(`http://localhost:8080/assignments/check?id=${id}`,check, { headers }).then(response => response.data)
   } catch (error) {
     throw {
       code: error.code,

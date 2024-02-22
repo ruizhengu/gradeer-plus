@@ -28,7 +28,8 @@ public class AssignmentController {
     }
 
     @PostMapping("/check")
-    public String updateCheckById(@RequestParam int id, @RequestHeader("Check") String check) {
+//    public String updateCheckById(@RequestParam int id, @RequestHeader("Check") String check) {
+    public String updateCheckById(@RequestParam int id, @RequestBody String check) {
         assignmentService.updateCheckById(id, check);
         return check;
     }

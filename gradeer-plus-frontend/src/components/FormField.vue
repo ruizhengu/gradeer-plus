@@ -1,15 +1,9 @@
 <script setup>
-import { defineEmits } from 'vue'
 
 defineProps({
-  label: {
-    type: String,
-    default: null
-  },
-  modelValue: {
-    type: [String, Number, Boolean],
-    default: null
-  },
+  id: String,
+  label: String,
+  modelValue: [String, Number, Boolean],
   labelWidth: {
     type: String,
     default: '1/6'
@@ -22,7 +16,18 @@ defineProps({
     type: String,
     default: 'text'
   },
-  id: String
+  step: {
+    type: [String, Number],
+    default: '0.1'
+  },
+  min: {
+    type: [String, Number],
+    default: '0'
+  },
+  max: {
+    type: [String, Number],
+    default: '1'
+  },
 })
 
 const emit = defineEmits(['update:modelValue']);
@@ -37,6 +42,6 @@ const updateValue = (event) => {
   <div class="flex flex-row items-center mb-2">
     <label :class="`font-bold flex-grow-0 w-${labelWidth}`">{{ label }}</label>
     <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow-0 w-${inputWidth}`"
-      @input="updateValue" />
+      :step="step" :min="min" :max="max" @input="updateValue" />
   </div>
 </template>
