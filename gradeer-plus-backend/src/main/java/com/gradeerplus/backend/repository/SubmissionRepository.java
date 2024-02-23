@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Integer>, JpaSpecificationExecutor<Submission> {
-    @Query(value = "SELECT * FROM SUBMISSIONS WHERE assignment_id = :assignment_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM submissions WHERE assignment_id = :assignment_id", nativeQuery = true)
     List<Submission> getAllSubmissionByAssignment(@Param("assignment_id") Integer assignment_id);
 
 }

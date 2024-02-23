@@ -4,25 +4,32 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
+import java.util.Set;
+
 @Entity
-@Table(name = "ASSIGNMENTS")
+@Table(name = "assignments")
 public class Assignment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "module")
     private String module;
 
+    @Column(name = "year")
     private Integer year;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "status")
     private String status;
 
+    @Column(name = "progress")
     private Integer progress;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "jsonb")
+    @Column(name = "check_data", columnDefinition = "jsonb")
     private String check_data;
 
     public Integer getId() {
@@ -73,23 +80,11 @@ public class Assignment {
         this.progress = progress;
     }
 
-    public String getCheckData() {
+    public String getCheck() {
         return check_data;
     }
 
-    public void setCheckData(String check) {
+    public void setCheck(String check) {
         this.check_data = check;
-    }
-
-    @Override
-    public String toString() {
-        return "Assignment{" +
-                "id=" + id +
-                ", module='" + module + '\'' +
-                ", year='" + year + '\'' +
-                ", name='" + name + '\'' +
-                ", status='" + status + '\'' +
-                ", progress=" + progress +
-                '}';
     }
 }

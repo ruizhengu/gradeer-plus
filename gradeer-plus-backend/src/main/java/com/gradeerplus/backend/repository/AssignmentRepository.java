@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssignmentRepository extends JpaRepository<Assignment, Integer>, JpaSpecificationExecutor<Assignment> {
-    @Query(value = "SELECT * FROM ASSIGNMENTS", nativeQuery = true)
+    @Query(value = "SELECT * FROM assignments", nativeQuery = true)
     List<Assignment> getAllAssignments();
 
-    @Query(value = "SELECT \"check\" FROM ASSIGNMENTS WHERE id = :id", nativeQuery = true)
+    @Query(value = "SELECT \"check\" FROM assignments WHERE id = :id", nativeQuery = true)
     String findCheckById(@Param("id") Integer id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE ASSIGNMENTS SET \"check\" = :check WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE assignments SET \"check\" = :check WHERE id = :id", nativeQuery = true)
     void updateCheckById(@Param("id") Integer id, @Param("check") String check);
 }

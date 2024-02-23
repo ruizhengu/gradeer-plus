@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/submission")
+@RequestMapping("/submissions")
 public class SubmissionController {
     @Resource
     private SubmissionServiceImpl submissionServiceImpl;
