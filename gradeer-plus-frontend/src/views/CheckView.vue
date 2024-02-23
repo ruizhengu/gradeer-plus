@@ -13,6 +13,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import { getCheckById, updateCheckById } from '@/api/assignments'
 import { useRouter, useRoute } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const id = route.query.id
 const module = route.query.module
@@ -47,7 +48,10 @@ getCheckById(id).then(response => {
 
 const submit = () => {
   updateCheckById(id, checks.value).then(response => {
-    console.log(response)
+    if (response.status == '200') {
+      alert("Check Submitted!");
+      back()
+    }
   })
 }
 
@@ -92,8 +96,6 @@ const reset = () => {
   checks.value.push(initalForm)
 }
 
-const router = useRouter()
-
 const back = () => {
   router.back()
 }
@@ -137,9 +139,7 @@ const back = () => {
           <BaseButton type="submit" color="info" label="Submit" @click="submit" />
           <BaseButton color="info" outline label="Reset" @click="reset" />
         </BaseButtons>
-        <BaseButtons class="mt-5">
-          <BaseButton color="info" label="Back" @click="back" />
-        </BaseButtons>
+        <BaseButton class="mt-5" color="info" label="Back" @click="back" />
       </div>
     </SectionMain>
   </LayoutAuthenticated>

@@ -1,11 +1,9 @@
 <script setup>
 import { mdiCalendarCheck } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
-// import NotificationBar from '@/components/NotificationBar.vue'
-// import TableAssignment from '@/components/TableAssignment.vue'
 import { mdiEye, mdiTrashCan, mdiLocationEnter } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
-import CardBoxModal from '@/components/CardBoxModal.vue'
+// import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
@@ -14,6 +12,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import { computed, ref } from 'vue'
 import { listAll } from '@/api/assignments'
 import { useRouter } from 'vue-router'
+import OptionStatus from '@/components/OptionStatus.vue'
 
 const router = useRouter()
 
@@ -25,7 +24,7 @@ listAll().then(response => {
 
 // const isModalActive = ref(false)
 
-const isModalDangerActive = ref(false)
+// const isModalDangerActive = ref(false)
 
 const perPage = ref(5)
 
@@ -49,14 +48,10 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-const statusClass = (status) => {
-  switch (status) {
-    case 'Done':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-green-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
-    case 'Not Started':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-red-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
-    case 'In Progress':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-yellow-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
+const updateStatus = (newStatus, index) => {
+  if (assignments.value[index]) {
+    assignments.value[index].status = newStatus
+    // update to the database
   }
 }
 
@@ -77,12 +72,11 @@ const enterAssignmentSubmissions = (id) => {
       </SectionTitleLineWithButton>
 
       <CardBox class="mb-6" has-table>
-        <!-- <TableAssignment checkable /> -->
         <div>
-          <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
+          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
             <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
             <p>This is sample modal</p>
-          </CardBoxModal>
+          </CardBoxModal> -->
 
           <table>
             <thead>
@@ -96,7 +90,7 @@ const enterAssignmentSubmissions = (id) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
+              <tr v-for="(assignment, index) in assignmentPaginated" :key="assignment.id">
                 <td data-label="Module" class="text-center">
                   {{ assignment.module }}
                 </td>
@@ -107,11 +101,8 @@ const enterAssignmentSubmissions = (id) => {
                   {{ assignment.name }}
                 </td>
                 <td data-label="Status">
-                  <select v-model="assignment.status" :class="statusClass(assignment.status)">
-                    <option value="Done">Done</option>
-                    <option value="Not Started">Not Started</option>
-                    <option value="In Progress">In Progress</option>
-                  </select>
+                  <OptionStatus :status="assignment.status"
+                    @update:status="(newStatus) => updateStatus(newStatus, index)" />
                 </td>
                 <td data-label="Progress" class="lg:w-32">
                   <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
@@ -121,11 +112,12 @@ const enterAssignmentSubmissions = (id) => {
 
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="success" :icon="mdiLocationEnter" small
+                    <BaseButton color="success" :icon="mdiLocationEnter" small label="Submissions"
                       @click="enterAssignmentSubmissions(assignment.id)" />
-                    <BaseButton color="info" :icon="mdiEye"
+                    <BaseButton color="info" :icon="mdiEye" label="Checks" small=""
                       @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
-                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="isModalDangerActive = true" />
+                    <BaseButton color="danger" :icon="mdiTrashCan" small label="Delete"
+                      @click="isModalDangerActive = true" />
                   </BaseButtons>
                 </td>
               </tr>

@@ -107,16 +107,10 @@ const componentClass = computed(() => {
 </script>
 
 <template>
-  <component
-    :is="is"
-    :class="componentClass"
-    :href="href"
-    :type="computedType"
-    :to="to"
-    :target="target"
-    :disabled="disabled"
-  >
+  <component :is="is" :class="componentClass" :href="href" :type="computedType" :to="to" :target="target"
+    :disabled="disabled">
     <BaseIcon v-if="icon" :path="icon" :size="iconSize" />
     <span v-if="label" :class="labelClass">{{ label }}</span>
+
   </component>
 </template>

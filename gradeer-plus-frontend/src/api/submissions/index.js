@@ -5,7 +5,7 @@ export const getAllSubmissionByAssignment = async (id) => {
     const params = {
       assignment_id: id
     }
-    return await axios.get('http://localhost:8080/submission', { params }).then(response => response.data)
+    return await axios.get('http://localhost:8080/submissions', { params }).then(response => response.data)
   } catch (error) {
     throw {
       code: error.code,

@@ -1,11 +1,7 @@
 <script setup>
-import { mdiBookAccountOutline } from '@mdi/js'
+import { mdiBookAccountOutline, mdiFountainPenTip } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
-// import NotificationBar from '@/components/NotificationBar.vue'
-// import TableAssignment from '@/components/TableAssignment.vue'
-import { mdiEye, mdiTrashCan, mdiLocationEnter } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
-// import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
@@ -13,8 +9,10 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { computed, ref } from 'vue'
 import { getAllSubmissionByAssignment } from '@/api/submissions'
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import OptionStatus from '@/components/OptionStatus.vue'
 
+const router = useRouter()
 const route = useRoute()
 const id = route.query.id
 
@@ -23,10 +21,6 @@ const submissions = ref([])
 getAllSubmissionByAssignment(id).then(response => {
   submissions.value = response
 })
-
-// const isModalActive = ref(false)
-
-const isModalDangerActive = ref(false)
 
 const perPage = ref(5)
 
@@ -50,20 +44,18 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-const statusClass = (status) => {
-  switch (status) {
-    case 'Done':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-green-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
-    case 'Not Started':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-red-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
-    case 'In Progress':
-      return 'block w-full py-2 px-3 border border-gray-300 bg-yellow-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500';
+const updateStatus = (newStatus, index) => {
+  console.log(submissions.value[index])
+  if (submissions.value[index]) {
+    submissions.value[index].status = newStatus
+    console.log(submissions.value[index].status)
+    // update to the database
   }
 }
 
-// const editAssignmentCheck = (id, module, name) => {
-//   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
-// }
+const back = () => {
+  router.back()
+}
 </script>
 
 <template>
@@ -74,11 +66,6 @@ const statusClass = (status) => {
 
       <CardBox class="mb-6" has-table>
         <div>
-          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
-            <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-            <p>This is sample modal</p>
-          </CardBoxModal> -->
-
           <table>
             <thead>
               <tr>
@@ -88,16 +75,18 @@ const statusClass = (status) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="submission in submissionPaginated" :key="submission.id">
+              <tr v-for="(submission, index) in submissionPaginated" :key="submission.id">
                 <td data-label="Module" class="text-center">
                   {{ submission.student }}
                 </td>
                 <td data-label="Status">
-                  <select v-model="submission.status" :class="statusClass(submission.status)">
-                    <option value="Done">Done</option>
-                    <option value="Not Started">Not Started</option>
-                    <option value="In Progress">In Progress</option>
-                  </select>
+                  <OptionStatus :status="submission.status"
+                    @update:status="(newStatus) => updateStatus(newStatus, index)" />
+                </td>
+                <td class="before:hidden lg:w-1 whitespace-nowrap">
+                  <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                    <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking" />
+                  </BaseButtons>
                 </td>
               </tr>
             </tbody>
@@ -113,6 +102,9 @@ const statusClass = (status) => {
           </div>
         </div>
       </CardBox>
+      <div class="flex justify-end">
+        <BaseButton color="info" label="Back" @click="back" />
+      </div>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
