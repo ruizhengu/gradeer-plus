@@ -20,4 +20,14 @@ public class SubmissionController {
     public List<Submission> getAllSubmissionByAssignment(@RequestParam int assignment_id) throws Exception {
         return submissionServiceImpl.getAllSubmissionByAssignment(assignment_id);
     }
+
+    @GetMapping("/code")
+    public String getCodeById(@RequestParam int id) throws Exception {
+        return submissionServiceImpl.getCodeById(id);
+    }
+
+    @GetMapping("/checks")
+    public String getAssignmentChecksById(@RequestParam int id) throws Exception {
+        return submissionServiceImpl.getAssignmentChecksById(id);
+    }
 }

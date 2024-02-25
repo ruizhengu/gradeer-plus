@@ -88,7 +88,6 @@ const addCheck = () => {
 const deleteCheck = (index) => {
   if (checks.value.length > 1) checks.value.splice(index, 1);
   else alert("You cannot delete the last form.");
-
 }
 
 const reset = () => {

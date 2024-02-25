@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface SubmissionService {
     List<Submission> getAllSubmissionByAssignment(Integer assignment_id);
+
+    String getCodeById(Integer id);
+
+    String getAssignmentChecksById(Integer id);
 }

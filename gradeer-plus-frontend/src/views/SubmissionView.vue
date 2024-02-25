@@ -36,11 +36,9 @@ const currentPageHuman = computed(() => currentPage.value + 1)
 
 const pagesList = computed(() => {
   const pagesList = []
-
   for (let i = 0; i < numPages.value; i++) {
     pagesList.push(i)
   }
-
   return pagesList
 })
 
@@ -51,6 +49,10 @@ const updateStatus = (newStatus, index) => {
     console.log(submissions.value[index].status)
     // update to the database
   }
+}
+
+const enterMarkingView = (id) => {
+  router.push({ name: 'Marking', query: { id: id } })
 }
 
 const back = () => {
@@ -85,7 +87,8 @@ const back = () => {
                 </td>
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking" />
+                    <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking"
+                      @click="enterMarkingView(submission.id)" />
                   </BaseButtons>
                 </td>
               </tr>

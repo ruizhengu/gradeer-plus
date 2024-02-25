@@ -16,4 +16,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     public List<Submission> getAllSubmissionByAssignment(Integer assignment_id) {
         return submissionRepository.getAllSubmissionByAssignment(assignment_id);
     }
+
+    @Override
+    public String getCodeById(Integer id) {
+        return submissionRepository.getCodeById(id);
+    }
+
+    @Override
+    public String getAssignmentChecksById(Integer id) {
+        return submissionRepository.getAssignmentChecksById(id);
+    }
 }

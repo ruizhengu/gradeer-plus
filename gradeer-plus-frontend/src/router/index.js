@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import Style from '@/views/StyleView.vue'
 // import Home from '@/views/HomeView.vue'
 import Assignment from '@/views/AssignmentsView.vue'
-import Ui from '@/views/UiView.vue'
 import Check from '@/views/CheckView.vue'
 import Submission from '@/views/SubmissionView.vue'
+import Marking from '@/views/MarkingView.vue'
 
 const routes = [
   // {
@@ -35,6 +35,11 @@ const routes = [
     component: Submission
   },
   {
+    path: '/marking',
+    name: 'Marking',
+    component: Marking
+  },
+  {
     meta: {
       title: 'Profile'
     },
@@ -42,14 +47,14 @@ const routes = [
     name: 'profile',
     component: () => import('@/views/ProfileView.vue')
   },
-  {
-    meta: {
-      title: 'Ui'
-    },
-    path: '/ui',
-    name: 'ui',
-    component: Ui
-  },
+  // {
+  //   meta: {
+  //     title: 'Ui'
+  //   },
+  //   path: '/ui',
+  //   name: 'ui',
+  //   component: Ui
+  // },
   {
     meta: {
       title: 'Responsive layout'

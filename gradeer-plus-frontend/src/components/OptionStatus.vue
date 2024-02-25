@@ -3,18 +3,18 @@ import { computed, ref, watchEffect } from 'vue'
 
 const props = defineProps({
   status: String
-});
+})
 
-const localStatus = ref(props.status);
+const localStatus = ref(props.status)
 
-const emit = defineEmits(['update:status']);
+const emit = defineEmits(['update:status'])
 
 watchEffect(() => {
   localStatus.value = props.status;
-});
+})
 
 function handleStatusChange() {
-  emit('update:status', localStatus.value);
+  emit('update:status', localStatus.value)
 }
 
 const statusClass = computed(() => {
