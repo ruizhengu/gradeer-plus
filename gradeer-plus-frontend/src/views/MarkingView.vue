@@ -5,15 +5,16 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import 'highlight.js/lib/common';
 import hljsVuePlugin from "@highlightjs/vue-plugin";
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { getCodeById, getAssignmentChecksById } from '@/api/submissions'
 
+const router = useRouter()
 const route = useRoute()
 const id = route.query.id
 
 const highlightjs = hljsVuePlugin.component
 
-const code = ref()
+const code = ref("")
 getCodeById(id).then(response => {
   code.value = response
 })
@@ -54,12 +55,14 @@ const updateMark = (index) => {
   console.log(marks)
 }
 
+const back = () => {
+  router.back()
+}
 </script>
 
 <template>
   <LayoutAuthenticated>
     <div class="flex h-screen overflow-hidden">
-      <!-- <h2>test {{ checks[0] }}</h2> -->
       <div class="flex flex-col flex-1 overflow-y-auto">
         <div v-for="(check, index) in checks" :key="index" class="container mx-auto p-4">
           <h2 class="text-2xl font-bold mb-4">{{ check.prompt }}</h2>
@@ -79,14 +82,12 @@ const updateMark = (index) => {
             <BaseButton type="submit" color="info" label="Submit" />
             <BaseButton color="info" outline label="Reset" />
           </BaseButtons>
-          <BaseButton class="mt-5" color="info" label="Back" />
+          <BaseButton class="mt-5" color="info" label="Back" @click="back" />
         </div>
       </div>
       <div class="flex-1 overflow-y-auto">
         <highlightjs language="java" :code="code" class="flex-1" />
       </div>
-
     </div>
-
   </LayoutAuthenticated>
 </template>
