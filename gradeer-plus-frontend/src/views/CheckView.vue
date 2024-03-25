@@ -112,8 +112,8 @@ const back = () => {
       <CardBox v-for="(check, index) in checks.value" :key="index" check @submit.prevent="submit">
         <CardBoxComponentTitle :title="'Check ' + (index + 1)" />
 
-        <FormField :id="`type-${index}`" v-model="check.type" label="Type" />
-        <FormField :id="`name-${index}`" v-model="check.name" label="Name" input-width="5/6" />
+        <FormField :id="`type-${index}`" v-model="check.type" label="Type" input-width="50" />
+        <FormField :id="`name-${index}`" v-model="check.name" label="Name" />
         <FormField :id="`prompt-${index}`" v-model="check.prompt" label="Prompt" input-width="5/6" />
 
         <FormHolder label="Feedback Values">

@@ -6,11 +6,11 @@ defineProps({
   modelValue: [String, Number, Boolean],
   labelWidth: {
     type: String,
-    default: '1/6'
+    default: '20'
   },
   inputWidth: {
     type: String,
-    default: '1/3'
+    default: '80'
   },
   type: {
     type: String,
@@ -39,9 +39,9 @@ const updateValue = (event) => {
 </script>
 
 <template>
-  <div class="flex flex-row items-center mb-2">
-    <label :class="`font-bold flex-grow-0 w-${labelWidth}`">{{ label }}</label>
-    <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow-0 w-${inputWidth}`"
-      :step="step" :min="min" :max="max" @input="updateValue" />
+  <div class="flex items-center mb-2">
+    <label :class="`font-bold flex-none`" :style="`width: ${labelWidth}%`">{{ label }}</label>
+    <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow`" :step="step" :min="min"
+      :max="max" :style="`width: ${inputWidth}%`" @input="updateValue" />
   </div>
 </template>
