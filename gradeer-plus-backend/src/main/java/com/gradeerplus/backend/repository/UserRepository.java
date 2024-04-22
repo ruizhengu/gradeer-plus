@@ -20,4 +20,9 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     @Modifying
     @Query(value = "INSERT INTO users (name, role) VALUES (?1, ?2)", nativeQuery = true)
     void addUser(String name, String role);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM users WHERE id = ?1", nativeQuery = true)
+    void deleteUser(Integer id);
 }

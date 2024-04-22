@@ -22,4 +22,9 @@ public class UserController {
     public void addUser(@RequestParam String name, @RequestParam String role) {
         userServiceImpl.addUser(name, role);
     }
+
+    @PostMapping("/delete")
+    public void deleteUser(@RequestParam Integer id) {
+        userServiceImpl.deleteUser(id);
+    }
 }

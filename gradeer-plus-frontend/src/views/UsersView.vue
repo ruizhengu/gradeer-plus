@@ -1,33 +1,31 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue'
 import {
-  mdiAccountMultiple
+  mdiAccountMultiple,
+  mdiPlus,
+  mdiTrashCan
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
+import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { computed, ref } from 'vue'
-import { getAllUsers, addUser } from '@/api/users'
-import { useRouter } from 'vue-router'
-import OptionStatus from '@/components/OptionStatus.vue'
+import { getAllUsers, addUser, deleteUser } from '@/api/users'
+import OptionRole from '@/components/OptionRole.vue'
 
-// const router = useRouter()
 
 const users = ref([])
 
 getAllUsers().then(response => {
-  console.log(response)
   users.value = response
 })
 
-// const isModalActive = ref(false)
+const modalAddActive = ref(false)
 
-// const isModalDangerActive = ref(false)
-
-const perPage = ref(5)
+const perPage = ref(10)
 
 const currentPage = ref(0)
 
@@ -49,27 +47,27 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-const funcAddUser = (name, role) => {
-  addUser(name, role)
-  getAllUsers().then(response => {
+const newUserName = ref("")
+const newUserRole = ref("")
+
+const updateRole = (newRole) => {
+  newUserRole.value = newRole
+}
+
+const funcDeleteUser = async (id) => {
+  await deleteUser(id)
+  await getAllUsers().then(response => {
     users.value = response
   })
 }
 
-// const updateStatus = (newStatus, index) => {
-//   if (assignments.value[index]) {
-//     assignments.value[index].status = newStatus
-//     // update to the database
-//   }
-// }
-
-// const editAssignmentCheck = (id, module, name) => {
-//   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
-// }
-
-// const enterAssignmentSubmissions = (id) => {
-//   router.push({ name: 'Submission', query: { id: id } })
-// }
+const submitNewUser = async () => {
+  await addUser(newUserName.value, newUserRole.value)
+  await getAllUsers().then(response => {
+    users.value = response
+  })
+  modalAddActive.value = false
+}
 
 </script>
 
@@ -81,10 +79,19 @@ const funcAddUser = (name, role) => {
 
       <CardBox class="mb-6" has-table>
         <div>
-          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
-            <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-            <p>This is sample modal</p>
-          </CardBoxModal> -->
+          <CardBoxModal v-model="modalAddActive" title="Add User" button="info" has-cancel button-label="Add"
+            @submitForm="submitNewUser">
+            <form @submit.prevent="submitNewUser">
+              <div class="flex items-center mb-2">
+                <label :class="`flex-none`" :style="`width: 15%`">Name</label>
+                <input v-model="newUserName" type="text" required>
+              </div>
+              <div class="flex items-center mb-2">
+                <label :class="`flex-none`" :style="`width: 15%`">Role</label>
+                <OptionRole v-model="newUserRole" @update:role="(newRole) => updateRole(newRole)" />
+              </div>
+            </form>
+          </CardBoxModal>
 
           <table>
             <thead>
@@ -95,7 +102,7 @@ const funcAddUser = (name, role) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(user, index) in usersPaginated" :key="user.id">
+              <tr v-for="user in usersPaginated" :key="user.id">
                 <td data-label="Name" class="text-center">
                   {{ user.name }}
                 </td>
@@ -106,7 +113,7 @@ const funcAddUser = (name, role) => {
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
                     <BaseButton color="danger" :icon="mdiTrashCan" small label="Delete"
-                      @click="isModalDangerActive = true" />
+                      @click="funcDeleteUser(user.id)" />
                   </BaseButtons>
                 </td>
               </tr>
@@ -123,6 +130,8 @@ const funcAddUser = (name, role) => {
           </div>
         </div>
       </CardBox>
+      <BaseButton color="success" label="Add" :icon="mdiPlus" @click="modalAddActive = true" />
+
     </SectionMain>
   </LayoutAuthenticated>
 </template>

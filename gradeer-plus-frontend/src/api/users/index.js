@@ -14,11 +14,19 @@ export const getAllUsers = async () => {
 
 export const addUser = async (name, role) => {
   try {
-    const params = {
-      name: name,
-      role: role
+    return await axios.post(`http://localhost:8080/users/add?name=${name}&role=${role}`).then(response => response)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
     }
-    return await axios.post(`http://localhost:8080/users/add`, { params }).then(response => response)
+  }
+}
+
+export const deleteUser = async (id) => {
+  try {
+    return await axios.post(`http://localhost:8080/users/delete?id=${id}`).then(response => response)
   } catch (error) {
     throw {
       code: error.code,

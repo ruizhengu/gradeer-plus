@@ -27,7 +27,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'cancel', 'confirm'])
+const emit = defineEmits(['update:modelValue', 'cancel', 'confirm', 'submitForm'])
 
 const value = computed({
   get: () => props.modelValue,
@@ -39,7 +39,12 @@ const confirmCancel = (mode) => {
   emit(mode)
 }
 
-const confirm = () => confirmCancel('confirm')
+// const confirm = () => confirmCancel('confirm')
+
+const confirm = () => {
+  emit('submitForm')
+  confirmCancel('confirm')
+}
 
 const cancel = () => confirmCancel('cancel')
 
@@ -52,20 +57,9 @@ window.addEventListener('keydown', (e) => {
 
 <template>
   <OverlayLayer v-show="value" @overlay-click="cancel">
-    <CardBox
-      v-show="value"
-      class="shadow-lg max-h-modal w-11/12 md:w-3/5 lg:w-2/5 xl:w-4/12 z-50"
-      is-modal
-    >
+    <CardBox v-show="value" class="shadow-lg max-h-modal w-11/12 md:w-3/5 lg:w-2/5 xl:w-4/12 z-50" is-modal>
       <CardBoxComponentTitle :title="title">
-        <BaseButton
-          v-if="hasCancel"
-          :icon="mdiClose"
-          color="whiteDark"
-          small
-          rounded-full
-          @click.prevent="cancel"
-        />
+        <BaseButton v-if="hasCancel" :icon="mdiClose" color="whiteDark" small rounded-full @click.prevent="cancel" />
       </CardBoxComponentTitle>
 
       <div class="space-y-3">
