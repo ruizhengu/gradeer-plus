@@ -6,6 +6,8 @@ import Check from '@/views/CheckView.vue'
 import Submission from '@/views/SubmissionView.vue'
 import Marking from '@/views/MarkingView.vue'
 import Lecturers from '@/views/LecturersView.vue'
+import Markers from '@/views/MarkersView.vue'
+import Users from '@/views/UsersView.vue'
 
 const routes = [
   // {
@@ -44,6 +46,16 @@ const routes = [
     path: '/lecturers',
     name: 'Lecturers',
     component: Lecturers
+  },
+  {
+    path: '/markers',
+    name: 'Markers',
+    component: Markers
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users
   },
   {
     meta: {

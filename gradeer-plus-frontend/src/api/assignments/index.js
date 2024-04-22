@@ -31,7 +31,7 @@ export const updateCheckById = async (id, check) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
-    };
+    }
     return await axios.post(`http://localhost:8080/assignments/check?id=${id}`,check, { headers }).then(response => response)
   } catch (error) {
     throw {

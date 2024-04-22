@@ -3,7 +3,8 @@ import {
   mdiLock,
   mdiCalendarCheck,
   mdiAccountCowboyHat,
-  mdiAccountHardHat
+  mdiAccountHardHat,
+  mdiAccountMultiple
 } from '@mdi/js'
 
 export default [
@@ -22,11 +23,11 @@ export default [
     label: 'Markers',
     icon: mdiAccountHardHat
   },
-  // {
-  //   to: '/',
-  //   label: 'Styles',
-  //   icon: mdiPalette
-  // },
+  {
+    to: '/users',
+    label: 'Users',
+    icon: mdiAccountMultiple
+  },
   {
     to: '/profile',
     label: 'Profile',
