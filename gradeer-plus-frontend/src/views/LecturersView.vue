@@ -1,10 +1,8 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue'
 import {
-  mdiEye,
-  mdiTrashCan,
-  mdiLocationEnter,
-  mdiCalendarCheck
+  mdiAccountCowboyHat,
+  mdiArrowRightBoldBox
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
 // import CardBoxModal from '@/components/CardBoxModal.vue'
@@ -38,6 +36,10 @@ const assignmentPaginated = computed(() =>
   assignments.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
 )
 
+const activeAssignments = computed(() => {
+  return assignmentPaginated.value.filter(assignment => assignment.status != 'Done')
+})
+
 const numPages = computed(() => Math.ceil(assignments.value.length / perPage.value))
 
 const currentPageHuman = computed(() => currentPage.value + 1)
@@ -59,12 +61,7 @@ const updateStatus = (newStatus, index) => {
   }
 }
 
-const editAssignmentCheck = (id, module, name) => {
-  router.push({ name: 'Check', query: { id: id, module: module, name: name } })
-}
-
-const enterAssignmentSubmissions = (id) => {
-  router.push({ name: 'Submission', query: { id: id } })
+const distributeSubmissions = () => {
 }
 
 </script>
@@ -72,16 +69,11 @@ const enterAssignmentSubmissions = (id) => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiCalendarCheck" title="Assignments" main>
+      <SectionTitleLineWithButton :icon="mdiAccountCowboyHat" title="Lecturers" main>
       </SectionTitleLineWithButton>
 
       <CardBox class="mb-6" has-table>
         <div>
-          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
-            <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-            <p>This is sample modal</p>
-          </CardBoxModal> -->
-
           <table>
             <thead>
               <tr>
@@ -94,7 +86,7 @@ const enterAssignmentSubmissions = (id) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(assignment, index) in assignmentPaginated" :key="assignment.id">
+              <tr v-for="(assignment, index) in activeAssignments" :key="assignment.id">
                 <td data-label="Module" class="text-center">
                   {{ assignment.module }}
                 </td>
@@ -116,12 +108,8 @@ const enterAssignmentSubmissions = (id) => {
 
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="success" :icon="mdiLocationEnter" small label="Submissions"
-                      @click="enterAssignmentSubmissions(assignment.id)" />
-                    <BaseButton color="info" :icon="mdiEye" label="Checks" small=""
-                      @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
-                    <BaseButton color="danger" :icon="mdiTrashCan" small label="Delete"
-                      @click="isModalDangerActive = true" />
+                    <BaseButton color="success" :icon="mdiArrowRightBoldBox" small label="Distribute"
+                      @click="distributeSubmissions" />
                   </BaseButtons>
                 </td>
               </tr>

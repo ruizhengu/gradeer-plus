@@ -1,7 +1,9 @@
 import {
   mdiAccountCircle,
   mdiLock,
-  mdiCalendarCheck
+  mdiCalendarCheck,
+  mdiAccountCowboyHat,
+  mdiAccountHardHat
 } from '@mdi/js'
 
 export default [
@@ -10,20 +12,16 @@ export default [
     label: 'Assignments',
     icon: mdiCalendarCheck
   },
-  // {
-  //   to: '/check',
-  //   label: 'Check',
-  //   icon: mdiSquareEditOutline
-  // {
-  //   to: '/ui',
-  //   label: 'UI',
-  //   icon: mdiTelevisionGuide
-  // },
-  // {
-  //   to: '/responsive',
-  //   label: 'Responsive',
-  //   icon: mdiResponsive
-  // },
+  {
+    to: '/lecturers',
+    label: 'Lecturers',
+    icon: mdiAccountCowboyHat
+  },
+  {
+    to: '/markers',
+    label: 'Markers',
+    icon: mdiAccountHardHat
+  },
   // {
   //   to: '/',
   //   label: 'Styles',
