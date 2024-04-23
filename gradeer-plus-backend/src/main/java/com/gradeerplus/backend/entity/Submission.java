@@ -18,6 +18,7 @@ public class Submission {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
+    private Integer grade;
 
     private String status;
     private String code;
@@ -44,6 +45,14 @@ public class Submission {
 
     public void setAssignment(Assignment assignment) {
         this.assignment = assignment;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
+    }
+
+    public Integer getGrade() {
+        return grade;
     }
 
     public String getStatus() {

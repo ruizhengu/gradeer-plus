@@ -11,7 +11,7 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import { getAllUsers, addUser, deleteUser } from '@/api/users'
 import OptionRole from '@/components/OptionRole.vue'
@@ -76,8 +76,8 @@ const addNewUser = async () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiAccountMultiple" title="Users" main>
-      </SectionTitleLineWithButton>
+      <SectionTitle :icon="mdiAccountMultiple" title="Users" main>
+      </SectionTitle>
 
       <CardBox class="mb-6" has-table>
         <div>

@@ -1,6 +1,11 @@
 <script setup>
-import { reactive, ref } from 'vue'
-import { mdiBallotOutline, mdiUpload, mdiPlus, mdiDelete } from '@mdi/js'
+import { ref } from 'vue'
+import {
+  mdiBallotOutline,
+  mdiUpload,
+  mdiPlus,
+  mdiDelete
+} from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
@@ -9,7 +14,7 @@ import FormHolder from '@/components/FormHolder.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
 import { getCheckById, updateCheckById } from '@/api/assignments'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -36,7 +41,7 @@ const initalForm = {
   checkGroup: ''
 }
 
-const checks = reactive([initalForm])
+const checks = ref([])
 
 getCheckById(id).then(response => {
   if (response.length != 0) {
@@ -45,6 +50,10 @@ getCheckById(id).then(response => {
     checks.value = [initalForm]
   }
 })
+
+// const checksWithoutGeneralFeedback = computed(() => {
+//   return checks.value.filter(check => check.name != 'Z__General')
+// })
 
 const submit = () => {
   updateCheckById(id, checks.value).then(response => {
@@ -82,7 +91,6 @@ const handleFile = (event) => {
 
 const addCheck = () => {
   checks.value.push(initalForm)
-  console.log(checks)
 }
 
 const deleteCheck = (index) => {
@@ -103,33 +111,44 @@ const back = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="`Checks - ${module} - ${name}`" main>
+      <SectionTitle :icon="mdiBallotOutline" :title="`Checks - ${module} - ${name}`" main>
         <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
           @click="uploadFile" />
         <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
-      </SectionTitleLineWithButton>
+      </SectionTitle>
 
-      <CardBox v-for="(check, index) in checks.value" :key="index" check @submit.prevent="submit">
-        <CardBoxComponentTitle :title="'Check ' + (index + 1)" />
+      <!-- <div class="flex items-center ps-4 border border-gray-200 rounded">
+        <div class=" flex items-center h-5">
+          <input id="helper-checkbox" aria-describedby="helper-checkbox-text" type="checkbox" value=""
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
+        </div>
+        <div class="ms-2 text-sm">
+          <label for="helper-checkbox" class="font-medium text-gray-900">Z__General</label>
+          <p id="helper-checkbox-text" class="text-xs font-normal text-gray-500">Additional general
+            feedback for the solution</p>
+        </div>
+      </div> -->
 
-        <FormField :id="`type-${index}`" v-model="check.type" label="Type" input-width="50" />
-        <FormField :id="`name-${index}`" v-model="check.name" label="Name" />
-        <FormField :id="`prompt-${index}`" v-model="check.prompt" label="Prompt" input-width="5/6" />
+      <CardBox v-for="(check, index) in checks" :key="index" check @submit.prevent="submit">
+        <CardBoxComponentTitle SectionTitle :title="'Check ' + (index + 1)" />
 
-        <FormHolder label="Feedback Values">
+        <FormField :id="`type-${index}`" v-model="check.type" SectionTitle label="Type" />
+        <FormField :id="`name-${index}`" v-model="check.name" SectionTitle label="Name" />
+        <FormField :id="`prompt-${index}`" v-model="check.prompt" SectionTitle label="Prompt" />
+
+        <FormHolder SectionTitle label="Feedback Values">
           <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
             <FormField id="score-1" v-model="item.score" label="Score" type="number" step="0.1" min="0" max="1" />
-            <FormField id="score-1" v-model="item.feedback" label="Feedback" input-width="5/6" />
+            <FormField id="score-1" v-model="item.feedback" label="Feedback" />
           </div>
         </FormHolder>
 
-        <FormField v-model="check.arbitraryFeedback" label="Arbitrary Feedback" />
-        <FormField v-model="check.priority" label="Priority" />
-        <FormField v-model="check.checkGroup" label="Check Group" />
+        <FormField v-model="check.arbitraryFeedback" SectionTitle label="Arbitrary Feedback" />
+        <FormField v-model="check.priority" SectionTitle label="Priority" />
+        <FormField v-model="check.checkGroup" SectionTitle label="Check Group" />
 
         <BaseButtons class="mt-5 flex">
-          <BaseButton v-if="index == checks.value.length - 1" color="success" label="Add" :icon="mdiPlus"
-            @click="addCheck" />
+          <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
           <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
         </BaseButtons>
       </CardBox>

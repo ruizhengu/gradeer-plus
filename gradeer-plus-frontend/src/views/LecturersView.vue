@@ -2,7 +2,8 @@
 import SectionMain from '@/components/SectionMain.vue'
 import {
   mdiAccountCowboyHat,
-  mdiArrowRightBoldBox
+  mdiFileSendOutline,
+  mdiUpload
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
 // import CardBoxModal from '@/components/CardBoxModal.vue'
@@ -10,23 +11,18 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import { listAll } from '@/api/assignments'
-import { useRouter } from 'vue-router'
-import OptionStatus from '@/components/OptionStatus.vue'
+// import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// const router = useRouter()
 
 const assignments = ref([])
 
 listAll().then(response => {
   assignments.value = response
 })
-
-// const isModalActive = ref(false)
-
-// const isModalDangerActive = ref(false)
 
 const perPage = ref(5)
 
@@ -54,13 +50,6 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-// const updateStatus = (newStatus, index) => {
-//   if (assignments.value[index]) {
-//     assignments.value[index].status = newStatus
-//     // update to the database
-//   }
-// }
-
 const distributeSubmissions = () => {
 }
 
@@ -69,8 +58,8 @@ const distributeSubmissions = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiAccountCowboyHat" title="Lecturers" main>
-      </SectionTitleLineWithButton>
+      <SectionTitle :icon="mdiAccountCowboyHat" title="Lecturers" main>
+      </SectionTitle>
 
       <CardBox class="mb-6" has-table>
         <div>
@@ -80,13 +69,12 @@ const distributeSubmissions = () => {
                 <th class="text-center">Module</th>
                 <th class="text-center">Year</th>
                 <th class="text-center">Name</th>
-                <!-- <th class="text-center">Status</th> -->
-                <!-- <th class="text-center">Progress</th> -->
+                <th class="text-center">Progress</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(assignment, index) in activeAssignments" :key="assignment.id">
+              <tr v-for="assignment in activeAssignments" :key="assignment.id">
                 <td data-label="Module" class="text-center">
                   {{ assignment.module }}
                 </td>
@@ -96,20 +84,18 @@ const distributeSubmissions = () => {
                 <td data-label="Name" class="text-center">
                   {{ assignment.name }}
                 </td>
-                <!-- <td data-label="Status">
-                  <OptionStatus :status="assignment.status"
-                    @update:status="(newStatus) => updateStatus(newStatus, index)" />
+                <td data-label="Progress">
+                  <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                    <div
+                      class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                      :style="{ width: assignment.progress + '%' }"> {{ assignment.progress }}%</div>
+                  </div>
                 </td>
-                <td data-label="Progress" class="lg:w-32">
-                  <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
-                    {{ assignment.progress }}
-                  </progress>
-                </td> -->
-
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="success" :icon="mdiArrowRightBoldBox" small label="Distribute"
+                    <BaseButton color="info" :icon="mdiFileSendOutline" small label="Distribute"
                       @click="distributeSubmissions" />
+                    <BaseButton color="info" :icon="mdiUpload" small label="Upload" />
                   </BaseButtons>
                 </td>
               </tr>

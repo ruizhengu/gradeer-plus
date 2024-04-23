@@ -13,7 +13,7 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import { listAll, addAssignment, deleteAssignment } from '@/api/assignments'
 import { useRouter } from 'vue-router'
@@ -102,8 +102,8 @@ const funcDeleteAssignmet = async () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiCalendarCheck" title="Assignments" main>
-      </SectionTitleLineWithButton>
+      <SectionTitle :icon="mdiCalendarCheck" title="Assignments" main>
+      </SectionTitle>
 
       <CardBox class="mb-6" has-table>
         <div>

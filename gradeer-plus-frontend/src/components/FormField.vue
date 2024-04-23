@@ -4,14 +4,6 @@ defineProps({
   id: String,
   label: String,
   modelValue: [String, Number, Boolean],
-  labelWidth: {
-    type: String,
-    default: '20'
-  },
-  inputWidth: {
-    type: String,
-    default: '80'
-  },
   type: {
     type: String,
     default: 'text'
@@ -40,8 +32,8 @@ const updateValue = (event) => {
 
 <template>
   <div class="flex items-center mb-2">
-    <label :class="`font-bold flex-none`" :style="`width: ${labelWidth}%`">{{ label }}</label>
+    <label :class="`font-bold flex-none`" :style="`width: 20%`">{{ label }}</label>
     <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow`" :step="step" :min="min"
-      :max="max" :style="`width: ${inputWidth}%`" @input="updateValue" />
+      :max="max" @input="updateValue" />
   </div>
 </template>
