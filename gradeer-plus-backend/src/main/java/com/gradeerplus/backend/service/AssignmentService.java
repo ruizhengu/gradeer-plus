@@ -12,4 +12,8 @@ public interface AssignmentService {
     String findCheckById(Integer id);
 
     void updateCheckById(Integer id, String check);
+
+    void addAssignment(String module, Integer year, String name, String status, Integer progress);
+
+    void deleteAssignment(Integer id);
 }

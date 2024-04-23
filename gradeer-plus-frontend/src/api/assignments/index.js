@@ -41,3 +41,27 @@ export const updateCheckById = async (id, check) => {
     }
   }
 }
+
+export const addAssignment = async (module, year, name, status, progress) => {
+  try {
+    return await axios.post(`http://localhost:8080/assignments/add?module=${module}&year=${year}&name=${name}&status=${status}&progress=${progress}`).then(response => response)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}
+
+export const deleteAssignment = async (id) => {
+  try {
+    return await axios.post(`http://localhost:8080/assignments/delete?id=${id}`).then(response => response)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}

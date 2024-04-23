@@ -24,9 +24,18 @@ public class AssignmentController {
     }
 
     @PostMapping("/check")
-//    public String updateCheckById(@RequestParam int id, @RequestHeader("Check") String check) {
     public String updateCheckById(@RequestParam int id, @RequestBody String check) {
         assignmentServiceImpl.updateCheckById(id, check);
         return check;
+    }
+
+    @PostMapping("/add")
+    public void addAssignment(@RequestParam String module, @RequestParam int year, @RequestParam String name, @RequestParam String status, @RequestParam int progress) {
+        assignmentServiceImpl.addAssignment(module, year, name, status, progress);
+    }
+
+    @PostMapping("/delete")
+    public void deleteAssignment(@RequestParam int id) {
+        assignmentServiceImpl.deleteAssignment(id);
     }
 }

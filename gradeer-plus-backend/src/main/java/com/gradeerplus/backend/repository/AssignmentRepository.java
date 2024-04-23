@@ -22,4 +22,14 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Integer>
     @Transactional
     @Query(value = "UPDATE assignments SET check_data = :check WHERE id = :id", nativeQuery = true)
     void updateCheckById(@Param("id") Integer id, @Param("check") String check);
+
+    @Transactional
+    @Modifying
+    @Query(value = "INSERT INTO assignments (module, year, name, status, progress) VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
+    void addAssignment(String module, Integer year, String name, String status, Integer progress);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM assignments WHERE id = ?1", nativeQuery = true)
+    void deleteAssignment(Integer id);
 }

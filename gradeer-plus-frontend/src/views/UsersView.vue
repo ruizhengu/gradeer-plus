@@ -61,11 +61,13 @@ const funcDeleteUser = async (id) => {
   })
 }
 
-const submitNewUser = async () => {
+const addNewUser = async () => {
   await addUser(newUserName.value, newUserRole.value)
   await getAllUsers().then(response => {
     users.value = response
   })
+  newUserName.value = ""
+  newUserRole.value = ""
   modalAddActive.value = false
 }
 
@@ -80,8 +82,8 @@ const submitNewUser = async () => {
       <CardBox class="mb-6" has-table>
         <div>
           <CardBoxModal v-model="modalAddActive" title="Add User" button="info" has-cancel button-label="Add"
-            @submitForm="submitNewUser">
-            <form @submit.prevent="submitNewUser">
+            @submitForm="addNewUser">
+            <form @submit.prevent="addNewUser">
               <div class="flex items-center mb-2">
                 <label :class="`flex-none`" :style="`width: 15%`">Name</label>
                 <input v-model="newUserName" type="text" required>

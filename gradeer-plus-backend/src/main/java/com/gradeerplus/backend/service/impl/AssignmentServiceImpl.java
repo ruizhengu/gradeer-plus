@@ -28,4 +28,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     public void updateCheckById(Integer id, String check) {
         assignmentRepository.updateCheckById(id, check);
     }
+
+    public void addAssignment(String module, Integer year, String name, String status, Integer progress) {
+        assignmentRepository.addAssignment(module, year, name, status, progress);
+    }
+
+    public void deleteAssignment(Integer id) {
+        assignmentRepository.deleteAssignment(id);
+    }
 }

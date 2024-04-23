@@ -4,17 +4,18 @@ import {
   mdiEye,
   mdiTrashCan,
   mdiLocationEnter,
-  mdiCalendarCheck
+  mdiCalendarCheck,
+  mdiPlus
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
-// import CardBoxModal from '@/components/CardBoxModal.vue'
+import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { computed, ref } from 'vue'
-import { listAll } from '@/api/assignments'
+import { listAll, addAssignment, deleteAssignment } from '@/api/assignments'
 import { useRouter } from 'vue-router'
 import OptionStatus from '@/components/OptionStatus.vue'
 
@@ -26,9 +27,9 @@ listAll().then(response => {
   assignments.value = response
 })
 
-// const isModalActive = ref(false)
+const modalAddActive = ref(false)
 
-// const isModalDangerActive = ref(false)
+const modalDeleteActive = ref(false)
 
 const perPage = ref(5)
 
@@ -67,6 +68,45 @@ const enterAssignmentSubmissions = (id) => {
   router.push({ name: 'Submission', query: { id: id } })
 }
 
+const newAssignment = ref({
+  module: "",
+  year: new Date().getFullYear(),
+  name: "",
+  status: "Not Started",
+  progress: 0
+})
+
+const createAssignment = async () => {
+  await addAssignment(newAssignment.value.module, newAssignment.value.year, newAssignment.value.name, newAssignment.value.status, newAssignment.value.progress)
+  await listAll().then(response => {
+    assignments.value = response
+  })
+  // Reset newAssignment form
+  newAssignment.value = {
+    module: "",
+    year: new Date().getFullYear(),
+    name: "",
+    status: "Not Started",
+    progress: 0
+  }
+  modalAddActive.value = false
+}
+
+const idAssignmentDeletion = ref('')
+
+const initDeleteAssignmet = (id) => {
+  idAssignmentDeletion.value = id
+  modalDeleteActive.value = true
+}
+
+const funcDeleteAssignmet = async () => {
+  await deleteAssignment(idAssignmentDeletion.value)
+  await listAll().then(response => {
+    assignments.value = response
+  })
+  modalDeleteActive.value = false
+}
+
 </script>
 
 <template>
@@ -77,10 +117,28 @@ const enterAssignmentSubmissions = (id) => {
 
       <CardBox class="mb-6" has-table>
         <div>
-          <!-- <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel>
-            <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-            <p>This is sample modal</p>
-          </CardBoxModal> -->
+          <CardBoxModal v-model="modalAddActive" title="Create Assignment" button="info" has-cancel
+            button-label="Create" @submitForm="createAssignment">
+            <form @submit.prevent="createAssignment">
+              <div class="flex items-center mb-2">
+                <label :class="`flex-none`" :style="`width: 15%`">Module</label>
+                <input v-model="newAssignment.module" type="text" required />
+              </div>
+              <div class="flex items-center mb-2">
+                <label :class="`flex-none`" :style="`width: 15%`">Year</label>
+                <input v-model="newAssignment.year" type="number" required />
+              </div>
+              <div class="flex items-center mb-2">
+                <label :class="`flex-none`" :style="`width: 15%`">Name</label>
+                <input v-model="newAssignment.name" type="text" required>
+              </div>
+            </form>
+          </CardBoxModal>
+
+          <CardBoxModal v-model="modalDeleteActive" title="Delete Assignment" button="danger" has-cancel
+            button-label="Delete" @submitForm="funcDeleteAssignmet">
+            <p>Are you sure you want to delete this assignment?</p>
+          </CardBoxModal>
 
           <table>
             <thead>
@@ -121,7 +179,7 @@ const enterAssignmentSubmissions = (id) => {
                     <BaseButton color="info" :icon="mdiEye" label="Checks" small=""
                       @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
                     <BaseButton color="danger" :icon="mdiTrashCan" small label="Delete"
-                      @click="isModalDangerActive = true" />
+                      @click="initDeleteAssignmet(assignment.id)" />
                   </BaseButtons>
                 </td>
               </tr>
@@ -138,6 +196,7 @@ const enterAssignmentSubmissions = (id) => {
           </div>
         </div>
       </CardBox>
+      <BaseButton color="success" label="Add" :icon="mdiPlus" @click="modalAddActive = true" />
     </SectionMain>
   </LayoutAuthenticated>
 </template>
