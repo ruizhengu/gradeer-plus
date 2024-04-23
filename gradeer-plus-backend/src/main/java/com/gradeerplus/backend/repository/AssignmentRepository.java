@@ -25,8 +25,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Integer>
 
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO assignments (module, year, name, status, progress) VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
-    void addAssignment(String module, Integer year, String name, String status, Integer progress);
+    @Query(value = "INSERT INTO assignments (module, year, name, progress) VALUES (?1, ?2, ?3, ?4)", nativeQuery = true)
+    void addAssignment(String module, Integer year, String name, Integer progress);
 
     @Transactional
     @Modifying

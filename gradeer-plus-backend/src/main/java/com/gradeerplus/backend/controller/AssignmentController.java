@@ -30,8 +30,8 @@ public class AssignmentController {
     }
 
     @PostMapping("/add")
-    public void addAssignment(@RequestParam String module, @RequestParam int year, @RequestParam String name, @RequestParam String status, @RequestParam int progress) {
-        assignmentServiceImpl.addAssignment(module, year, name, status, progress);
+    public void addAssignment(@RequestParam String module, @RequestParam int year, @RequestParam String name, @RequestParam int progress) {
+        assignmentServiceImpl.addAssignment(module, year, name, progress);
     }
 
     @PostMapping("/delete")

@@ -17,7 +17,6 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import { computed, ref } from 'vue'
 import { listAll, addAssignment, deleteAssignment } from '@/api/assignments'
 import { useRouter } from 'vue-router'
-import OptionStatus from '@/components/OptionStatus.vue'
 
 const router = useRouter()
 
@@ -53,13 +52,6 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-const updateStatus = (newStatus, index) => {
-  if (assignments.value[index]) {
-    assignments.value[index].status = newStatus
-    // update to the database
-  }
-}
-
 const editAssignmentCheck = (id, module, name) => {
   router.push({ name: 'Check', query: { id: id, module: module, name: name } })
 }
@@ -72,12 +64,11 @@ const newAssignment = ref({
   module: "",
   year: new Date().getFullYear(),
   name: "",
-  status: "Not Started",
   progress: 0
 })
 
 const createAssignment = async () => {
-  await addAssignment(newAssignment.value.module, newAssignment.value.year, newAssignment.value.name, newAssignment.value.status, newAssignment.value.progress)
+  await addAssignment(newAssignment.value.module, newAssignment.value.year, newAssignment.value.name, newAssignment.value.progress)
   await listAll().then(response => {
     assignments.value = response
   })
@@ -86,7 +77,6 @@ const createAssignment = async () => {
     module: "",
     year: new Date().getFullYear(),
     name: "",
-    status: "Not Started",
     progress: 0
   }
   modalAddActive.value = false
@@ -146,13 +136,12 @@ const funcDeleteAssignmet = async () => {
                 <th class="text-center">Module</th>
                 <th class="text-center">Year</th>
                 <th class="text-center">Name</th>
-                <th class="text-center">Status</th>
                 <th class="text-center">Progress</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(assignment, index) in assignmentPaginated" :key="assignment.id">
+              <tr v-for="assignment in assignmentPaginated" :key="assignment.id">
                 <td data-label="Module" class="text-center">
                   {{ assignment.module }}
                 </td>
@@ -162,14 +151,12 @@ const funcDeleteAssignmet = async () => {
                 <td data-label="Name" class="text-center">
                   {{ assignment.name }}
                 </td>
-                <td data-label="Status">
-                  <OptionStatus :status="assignment.status"
-                    @update:status="(newStatus) => updateStatus(newStatus, index)" />
-                </td>
-                <td data-label="Progress" class="lg:w-32">
-                  <progress class="flex w-2/5 self-center lg:w-full" max="100" :value="assignment.progress">
-                    {{ assignment.progress }}
-                  </progress>
+                <td data-label="Progress">
+                  <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                    <div
+                      class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                      :style="{ width: assignment.progress + '%' }"> {{ assignment.progress }}%</div>
+                  </div>
                 </td>
 
                 <td class="before:hidden lg:w-1 whitespace-nowrap">

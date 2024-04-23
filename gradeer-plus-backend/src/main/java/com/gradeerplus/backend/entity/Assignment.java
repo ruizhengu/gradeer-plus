@@ -22,9 +22,6 @@ public class Assignment {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "status")
-    private String status;
-
     @Column(name = "progress")
     private Integer progress;
 
@@ -62,14 +59,6 @@ public class Assignment {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Integer getProgress() {

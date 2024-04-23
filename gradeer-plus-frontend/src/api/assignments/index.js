@@ -42,9 +42,9 @@ export const updateCheckById = async (id, check) => {
   }
 }
 
-export const addAssignment = async (module, year, name, status, progress) => {
+export const addAssignment = async (module, year, name, progress) => {
   try {
-    return await axios.post(`http://localhost:8080/assignments/add?module=${module}&year=${year}&name=${name}&status=${status}&progress=${progress}`).then(response => response)
+    return await axios.post(`http://localhost:8080/assignments/add?module=${module}&year=${year}&name=${name}&progress=${progress}`).then(response => response)
   } catch (error) {
     throw {
       code: error.code,

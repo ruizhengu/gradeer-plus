@@ -13,7 +13,7 @@ public interface AssignmentService {
 
     void updateCheckById(Integer id, String check);
 
-    void addAssignment(String module, Integer year, String name, String status, Integer progress);
+    void addAssignment(String module, Integer year, String name, Integer progress);
 
     void deleteAssignment(Integer id);
 }
