@@ -2,7 +2,6 @@ import {
   mdiAccountCircle,
   mdiLock,
   mdiCalendarCheck,
-  mdiAccountCowboyHat,
   mdiAccountHardHat,
   mdiAccountMultiple
 } from '@mdi/js'
@@ -12,11 +11,6 @@ export default [
     to: '/',
     label: 'Assignments',
     icon: mdiCalendarCheck
-  },
-  {
-    to: '/lecturers',
-    label: 'Lecturers',
-    icon: mdiAccountCowboyHat
   },
   {
     to: '/markers',

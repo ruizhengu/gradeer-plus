@@ -5,19 +5,11 @@ import Assignment from '@/views/AssignmentsView.vue'
 import Check from '@/views/CheckView.vue'
 import Submission from '@/views/SubmissionView.vue'
 import Marking from '@/views/MarkingView.vue'
-import Lecturers from '@/views/LecturersView.vue'
+import AssignmentCreation from '@/views/AssignmentCreationView.vue'
 import Markers from '@/views/MarkersView.vue'
 import Users from '@/views/UsersView.vue'
 
 const routes = [
-  // {
-  //   meta: {
-  //     title: 'Home'
-  //   },
-  //   path: '/',
-  //   name: 'home',
-  //   component: Home
-  // },
   {
     meta: {
       title: 'Assignments'
@@ -28,33 +20,33 @@ const routes = [
   },
   {
     path: '/assignments/check',
-    name: 'Check',
+    name: 'assignment-check',
     component: Check,
     props: true
   },
   {
     path: '/submission',
-    name: 'Submission',
+    name: 'submission',
     component: Submission
   },
   {
     path: '/marking',
-    name: 'Marking',
+    name: 'marking',
     component: Marking
   },
   {
-    path: '/lecturers',
-    name: 'Lecturers',
-    component: Lecturers
+    path: '/assignments/create',
+    name: 'assignment-create',
+    component: AssignmentCreation
   },
   {
     path: '/markers',
-    name: 'Markers',
+    name: 'markers',
     component: Markers
   },
   {
     path: '/users',
-    name: 'Users',
+    name: 'users',
     component: Users
   },
   {
@@ -64,22 +56,6 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/ProfileView.vue')
-  },
-  // {
-  //   meta: {
-  //     title: 'Ui'
-  //   },
-  //   path: '/ui',
-  //   name: 'ui',
-  //   component: Ui
-  // },
-  {
-    meta: {
-      title: 'Responsive layout'
-    },
-    path: '/responsive',
-    name: 'responsive',
-    component: () => import('@/views/ResponsiveView.vue')
   },
   {
     meta: {

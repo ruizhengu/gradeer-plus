@@ -49,8 +49,9 @@ const pagesList = computed(() => {
 })
 
 const enterSubmissionView = (id) => {
-  router.push({ name: 'Submission', query: { id: id } })
+  router.push({ name: 'submission', query: { id: id } })
 }
+
 </script>
 
 <template>
