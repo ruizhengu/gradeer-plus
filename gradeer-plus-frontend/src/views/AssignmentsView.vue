@@ -16,14 +16,14 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
-import { listAll, deleteAssignment } from '@/api/assignments'
+import { fetchAllAssignments, deleteAssignment } from '@/api/assignments'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const assignments = ref([])
 
-listAll().then(response => {
+fetchAllAssignments().then(response => {
   assignments.value = response
 })
 
@@ -52,7 +52,7 @@ const pagesList = computed(() => {
 })
 
 const editAssignmentCheck = (id, module, name) => {
-  router.push({ name: 'Check', query: { id: id, module: module, name: name } })
+  router.push({ name: 'assignment-check', query: { id: id, module: module, name: name } })
 }
 
 const enterAssignmentCreationView = () => {
@@ -68,7 +68,7 @@ const initDeleteAssignmet = (id) => {
 
 const funcDeleteAssignmet = async () => {
   await deleteAssignment(idAssignmentDeletion.value)
-  await listAll().then(response => {
+  await fetchAllAssignments().then(response => {
     assignments.value = response
   })
   modalDeleteActive.value = false

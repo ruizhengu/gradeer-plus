@@ -20,6 +20,10 @@ defineProps({
     type: [String, Number],
     default: '1'
   },
+  isRequired: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['update:modelValue']);
@@ -34,6 +38,6 @@ const updateValue = (event) => {
   <div class="flex items-center mb-2">
     <label :class="`font-bold flex-none`" :style="`width: 20%`">{{ label }}</label>
     <input :id="id" :value="modelValue" :type="type" :class="`p-2 border rounded flex-grow`" :step="step" :min="min"
-      :max="max" @input="updateValue" />
+      :max="max" :required="isRequired" @input="updateValue" />
   </div>
 </template>

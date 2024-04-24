@@ -11,14 +11,14 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
-import { listAll } from '@/api/assignments'
+import { fetchAllAssignments } from '@/api/assignments'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const assignments = ref([])
 
-listAll().then(response => {
+fetchAllAssignments().then(response => {
   assignments.value = response
 })
 

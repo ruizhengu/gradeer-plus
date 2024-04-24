@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Integer>, JpaSpecificationExecutor<Submission> {
     @Query(value = "SELECT * FROM submissions WHERE assignment_id = :assignment_id", nativeQuery = true)
-    List<Submission> getAllSubmissionByAssignment(@Param("assignment_id") Integer assignment_id);
+    List<Submission> fetchAllSubmissionByAssignment(@Param("assignment_id") Integer assignment_id);
 
     @Query(value = "SELECT code from submissions WHERE id = :id", nativeQuery = true)
     String getCodeById(@Param("id") Integer id);

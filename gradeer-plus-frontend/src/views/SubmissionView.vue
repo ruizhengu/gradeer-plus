@@ -12,7 +12,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
-import { getAllSubmissionByAssignment } from '@/api/submissions'
+import { fetchAllSubmissionByAssignment } from '@/api/submissions'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -21,7 +21,7 @@ const id = route.query.id
 
 const submissions = ref([])
 
-getAllSubmissionByAssignment(id).then(response => {
+fetchAllSubmissionByAssignment(id).then(response => {
   submissions.value = response
 })
 

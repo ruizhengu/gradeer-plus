@@ -13,13 +13,13 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
-import { getAllUsers, addUser, deleteUser } from '@/api/users'
+import { fetchAllUsers, addUser, deleteUser } from '@/api/users'
 import OptionRole from '@/components/OptionRole.vue'
 
 
 const users = ref([])
 
-getAllUsers().then(response => {
+fetchAllUsers().then(response => {
   users.value = response
 })
 
@@ -56,14 +56,14 @@ const updateRole = (newRole) => {
 
 const funcDeleteUser = async (id) => {
   await deleteUser(id)
-  await getAllUsers().then(response => {
+  await fetchAllUsers().then(response => {
     users.value = response
   })
 }
 
 const addNewUser = async () => {
   await addUser(newUserName.value, newUserRole.value)
-  await getAllUsers().then(response => {
+  await fetchAllUsers().then(response => {
     users.value = response
   })
   newUserName.value = ""

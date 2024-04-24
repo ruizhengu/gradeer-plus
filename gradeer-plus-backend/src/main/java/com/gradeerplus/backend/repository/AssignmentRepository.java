@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public interface AssignmentRepository extends JpaRepository<Assignment, Integer>, JpaSpecificationExecutor<Assignment> {
     @Query(value = "SELECT * FROM assignments", nativeQuery = true)
-    List<Assignment> getAllAssignments();
+    List<Assignment> fetchAllAssignments();
 
     @Query(value = "SELECT check_data FROM assignments WHERE id = :id", nativeQuery = true)
-    String findCheckById(@Param("id") Integer id);
+    String getCheckById(@Param("id") Integer id);
 
     @Modifying
     @Transactional

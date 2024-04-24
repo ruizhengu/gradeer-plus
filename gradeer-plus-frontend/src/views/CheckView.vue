@@ -111,13 +111,15 @@ const back = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitle :icon="mdiBallotOutline" :title="`Checks - ${module} - ${name}`" main>
-        <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
-          @click="uploadFile" />
-        <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
-      </SectionTitle>
+      <form @submit.prevent="submit">
 
-      <!-- <div class="flex items-center ps-4 border border-gray-200 rounded">
+        <SectionTitle :icon="mdiBallotOutline" :title="`Checks - ${module} - ${name}`" main>
+          <BaseButton target="_blank" :icon="mdiUpload" label="Upload Checks" color="contrast" rounded-full small
+            @click="uploadFile" />
+          <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleFile" />
+        </SectionTitle>
+
+        <!-- <div class="flex items-center ps-4 border border-gray-200 rounded">
         <div class=" flex items-center h-5">
           <input id="helper-checkbox" aria-describedby="helper-checkbox-text" type="checkbox" value=""
             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
@@ -129,36 +131,40 @@ const back = () => {
         </div>
       </div> -->
 
-      <CardBox v-for="(check, index) in checks" :key="index" check @submit.prevent="submit">
-        <CardBoxComponentTitle SectionTitle :title="'Check ' + (index + 1)" />
+        <CardBox v-for="(check, index) in checks" :key="index" check @submit.prevent="submit">
+          <CardBoxComponentTitle SectionTitle :title="'Check ' + (index + 1)" />
 
-        <FormField :id="`type-${index}`" v-model="check.type" SectionTitle label="Type" />
-        <FormField :id="`name-${index}`" v-model="check.name" SectionTitle label="Name" />
-        <FormField :id="`prompt-${index}`" v-model="check.prompt" SectionTitle label="Prompt" />
 
-        <FormHolder SectionTitle label="Feedback Values">
-          <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
-            <FormField id="score-1" v-model="item.score" label="Score" type="number" step="0.1" min="0" max="1" />
-            <FormField id="score-1" v-model="item.feedback" label="Feedback" />
-          </div>
-        </FormHolder>
+          <FormField :id="`type-${index}`" v-model="check.type" SectionTitle label="Type" />
+          <FormField :id="`name-${index}`" v-model="check.name" SectionTitle label="Name" />
+          <FormField :id="`prompt-${index}`" v-model="check.prompt" SectionTitle label="Prompt" />
 
-        <FormField v-model="check.arbitraryFeedback" SectionTitle label="Arbitrary Feedback" />
-        <FormField v-model="check.priority" SectionTitle label="Priority" />
-        <FormField v-model="check.checkGroup" SectionTitle label="Check Group" />
+          <FormHolder SectionTitle label="Feedback Values">
+            <div v-for="(item, id) in check.feedbackValues" :key="id" class="mb-4 p-4 border border-black rounded-lg">
+              <FormField id="score-1" v-model="item.score" label="Score" type="number" step="0.1" min="0" max="1" />
+              <FormField id="score-1" v-model="item.feedback" label="Feedback" />
+            </div>
+          </FormHolder>
 
-        <BaseButtons class="mt-5 flex">
-          <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus" @click="addCheck" />
-          <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
-        </BaseButtons>
-      </CardBox>
-      <div class="flex justify-between mt-5">
-        <BaseButtons class="mt-5">
-          <BaseButton type="submit" color="info" label="Submit" @click="submit" />
-          <BaseButton color="info" outline label="Reset" @click="reset" />
-        </BaseButtons>
-        <BaseButton class="mt-5" color="info" label="Back" @click="back" />
-      </div>
+          <FormField v-model="check.arbitraryFeedback" SectionTitle label="Arbitrary Feedback" />
+          <FormField v-model="check.priority" SectionTitle label="Priority" />
+          <FormField v-model="check.checkGroup" SectionTitle label="Check Group" />
+
+          <BaseButtons class="mt-5 flex">
+            <BaseButton v-if="index == checks.length - 1" color="success" label="Add" :icon="mdiPlus"
+              @click="addCheck" />
+            <BaseButton class="ml-2" color="danger" label="Delete" :icon="mdiDelete" @click="deleteCheck(index)" />
+          </BaseButtons>
+        </CardBox>
+        <div class="flex justify-between mt-5">
+          <BaseButtons class="mt-5">
+            <BaseButton type="submit" color="info" label="Submit" />
+            <BaseButton color="info" outline label="Reset" @click="reset" />
+          </BaseButtons>
+          <BaseButton class="mt-5" color="danger" label="Cancel" @click="back" />
+        </div>
+      </form>
+
     </SectionMain>
   </LayoutAuthenticated>
 </template>

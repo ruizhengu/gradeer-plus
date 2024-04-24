@@ -15,12 +15,12 @@ public class AssignmentController {
 
     @GetMapping
     public List<Assignment> listAll() throws Exception {
-        return assignmentServiceImpl.listAll();
+        return assignmentServiceImpl.fetchAllAssignments();
     }
 
     @GetMapping("/check")
     public String getCheckById(@RequestParam int id) throws Exception {
-        return assignmentServiceImpl.findCheckById(id);
+        return assignmentServiceImpl.getCheckById(id);
     }
 
     @PostMapping("/check")

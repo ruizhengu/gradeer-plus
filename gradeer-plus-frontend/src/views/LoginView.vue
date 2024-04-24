@@ -20,7 +20,7 @@ const form = reactive({
 const router = useRouter()
 
 const submit = () => {
-  router.push('/home')
+  router.push('/')
 }
 </script>
 
@@ -42,7 +42,7 @@ const submit = () => {
         <template #footer>
           <BaseButtons>
             <BaseButton type="submit" color="info" label="Login" />
-            <BaseButton to="/home" color="info" outline label="Back" />
+            <BaseButton to="/" color="info" outline label="Back" />
           </BaseButtons>
         </template>
       </CardBox>

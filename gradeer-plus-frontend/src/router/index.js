@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import Style from '@/views/StyleView.vue'
-// import Home from '@/views/HomeView.vue'
 import Assignment from '@/views/AssignmentsView.vue'
 import Check from '@/views/CheckView.vue'
 import Submission from '@/views/SubmissionView.vue'

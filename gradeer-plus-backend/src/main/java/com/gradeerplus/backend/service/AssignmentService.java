@@ -5,11 +5,11 @@ import com.gradeerplus.backend.entity.Assignment;
 import java.util.List;
 
 public interface AssignmentService {
-    List<Assignment> listAll();
+    List<Assignment> fetchAllAssignments();
 
-    Assignment findById(Integer id);
+    Assignment getAssignmentById(Integer id);
 
-    String findCheckById(Integer id);
+    String getCheckById(Integer id);
 
     void updateCheckById(Integer id, String check);
 

@@ -13,16 +13,16 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Resource
     private AssignmentRepository assignmentRepository;
 
-    public List<Assignment> listAll() {
-        return assignmentRepository.getAllAssignments();
+    public List<Assignment> fetchAllAssignments() {
+        return assignmentRepository.fetchAllAssignments();
     }
 
-    public Assignment findById(Integer id) {
+    public Assignment getAssignmentById(Integer id) {
         return null;
     }
 
-    public String findCheckById(Integer id) {
-        return assignmentRepository.findCheckById(id);
+    public String getCheckById(Integer id) {
+        return assignmentRepository.getCheckById(id);
     }
 
     public void updateCheckById(Integer id, String check) {

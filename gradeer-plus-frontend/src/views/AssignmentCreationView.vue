@@ -24,9 +24,23 @@ const back = () => {
   router.back()
 }
 
-const createAssignment = async () => {
-  await addAssignment(config.value.module, config.value.year, config.value.name, config.value.progress)
-  back()
+// const createAssignment = async () => {
+//   await addAssignment(config.value.module, config.value.year, config.value.name, config.value.progress)
+//   back()
+// }
+
+const submit = () => {
+  addAssignment(
+    config.value.module,
+    config.value.year,
+    config.value.name,
+    config.value.progress
+  ).then(response => {
+    if (response.status == '200') {
+      alert("Assignment Created!");
+      back()
+    }
+  })
 }
 
 </script>
@@ -36,12 +50,15 @@ const createAssignment = async () => {
     <SectionMain>
       <SectionTitle :icon="mdiBookPlusOutline" title="Create Assignment" main>
       </SectionTitle>
-      <FormField v-model="config.module" SectionTitle label="Module" />
-      <FormField v-model="config.year" SectionTitle label="Year" />
-      <FormField v-model="config.name" SectionTitle label="Name" />
-      <div class="flex justify-end">
-        <BaseButton color="success" label="Create" @click="createAssignment" />
-      </div>
+      <form @submit.prevent="submit">
+        <FormField v-model="config.module" SectionTitle label="Module" is-required="true" />
+        <FormField v-model="config.year" SectionTitle label="Year" />
+        <FormField v-model="config.name" SectionTitle label="Name" is-required="true" />
+        <div class="flex justify-between w-full">
+          <BaseButton color="success" label="Create" type="submit" />
+          <BaseButton color="danger" label="Cancel" @click="back" />
+        </div>
+      </form>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

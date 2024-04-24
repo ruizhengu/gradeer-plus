@@ -18,7 +18,7 @@ public class SubmissionController {
 
     @GetMapping()
     public List<Submission> getAllSubmissionByAssignment(@RequestParam int assignment_id) throws Exception {
-        return submissionServiceImpl.getAllSubmissionByAssignment(assignment_id);
+        return submissionServiceImpl.fetchAllSubmissionByAssignment(assignment_id);
     }
 
     @GetMapping("/code")

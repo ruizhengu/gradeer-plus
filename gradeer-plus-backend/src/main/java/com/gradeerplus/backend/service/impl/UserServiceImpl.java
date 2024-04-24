@@ -14,8 +14,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserRepository userRepository;
 
-    public List<User> listAll() {
-        return userRepository.getAllUsers();
+    public List<User> fetchAllUsers() {
+        return userRepository.fetchAllUsers();
     }
 
     public void addUser(String name, String role) {

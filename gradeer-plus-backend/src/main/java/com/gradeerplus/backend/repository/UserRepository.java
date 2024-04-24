@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     @Query(value = "SELECT * FROM users", nativeQuery = true)
-    List<User> getAllUsers();
+    List<User> fetchAllUsers();
 
     @Transactional
     @Modifying

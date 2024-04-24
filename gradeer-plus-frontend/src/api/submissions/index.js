@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const getAllSubmissionByAssignment = async (id) => {
+export const fetchAllSubmissionByAssignment = async (id) => {
   try {
     const params = {
       assignment_id: id

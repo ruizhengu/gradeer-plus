@@ -5,7 +5,7 @@ import com.gradeerplus.backend.entity.Submission;
 import java.util.List;
 
 public interface SubmissionService {
-    List<Submission> getAllSubmissionByAssignment(Integer assignment_id);
+    List<Submission> fetchAllSubmissionByAssignment(Integer assignment_id);
 
     String getCodeById(Integer id);
 

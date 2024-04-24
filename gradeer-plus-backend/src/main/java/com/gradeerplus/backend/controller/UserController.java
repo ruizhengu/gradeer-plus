@@ -15,7 +15,7 @@ public class UserController {
 
     @GetMapping
     public List<User> listAll() throws Exception {
-        return userServiceImpl.listAll();
+        return userServiceImpl.fetchAllUsers();
     }
 
     @PostMapping("/add")

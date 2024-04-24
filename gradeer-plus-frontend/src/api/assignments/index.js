@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const listAll = async () => {
+export const fetchAllAssignments = async () => {
   try {
     return await axios.get('http://localhost:8080/assignments').then(response => response.data)
   } catch (error) {
@@ -32,7 +32,7 @@ export const updateCheckById = async (id, check) => {
     const headers = {
       'Content-Type': 'application/json',
     }
-    return await axios.post(`http://localhost:8080/assignments/check?id=${id}`,check, { headers }).then(response => response)
+    return await axios.post(`http://localhost:8080/assignments/check?id=${id}`, check, { headers }).then(response => response)
   } catch (error) {
     throw {
       code: error.code,

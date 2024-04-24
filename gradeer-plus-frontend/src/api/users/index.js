@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const getAllUsers = async () => {
+export const fetchAllUsers = async () => {
   try {
     return await axios.get('http://localhost:8080/users').then(response => response.data)
   } catch (error) {
