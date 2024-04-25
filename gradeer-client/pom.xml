@@ -15,7 +15,7 @@
         <pmd.version>6.55.0</pmd.version>
     </properties>
     <groupId>tech.clegg.gradeer</groupId>
-    <artifactId>gradeer</artifactId>
+    <artifactId>gradeer-client</artifactId>
     <version>1.00a2</version>
     <packaging>jar</packaging>
     <url>https://github.com/ben-clegg/gradeer</url>

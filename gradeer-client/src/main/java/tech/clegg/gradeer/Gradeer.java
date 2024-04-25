@@ -55,7 +55,10 @@ public class Gradeer
         try
         {
             // Setup config
-            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
+//            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
+
+            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
+
             if (Files.notExists(configJSON))
             {
                 System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
@@ -290,6 +293,7 @@ public class Gradeer
         solutions.forEach(solution -> {
             JavaCompiler compiler = JavaCompiler.createCompiler(getConfiguration());
             // Compile; this flags the solution as uncompilable if compilation fails
+            // TODO Could add a socket to trigger the compilation when upload the submissions
             compiler.compile(solution);
         });
         
