@@ -4,5 +4,6 @@ src/test/resources/testEnvironments/**/*.class
 src/test/resources/testEnvironments/**/*.tar.gz
 src/test/resources/testEnvironments/fitnessAssignment
 src/test/resources/testEnvironments/*/output/**/*
+src/test/resources/testEnvironments/exampleWithDependencies/studentSolutions-output/*
 .DS_Store
 .idea
