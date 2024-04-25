@@ -1,0 +1,16 @@
+{
+  "studentSolutionsDirPath": "studentSolutions",
+  "modelSolutionsDirPath": "modelSolutions",
+  "testsDirPath": "testSuites",
+  "junitVersion": "JUNIT5",
+  "checkJSONs": ["manualChecks.json"],
+  "perTestSuiteTimeout": 120,
+  "checkstyleXml": "checkstyle.xml",
+  "preManualJavaClassesToExecute": [{
+    "fullClassName" : "pack.Lift",
+    "args": ["resources/grading/winequality-red.csv resources/grading/winequality-white.csv resources/grading/queries.txt"],
+    "additionalCPElems": [],
+    "waitAfterExecutionTime": 3
+  }],
+  "inspectionCommand": "C:/Users/bcleg/AppData/Local/atom/atom.exe"
+}
