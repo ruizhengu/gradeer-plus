@@ -6,14 +6,19 @@ import {
 } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
+import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
-import { fetchAllSubmissionByAssignment } from '@/api/submissions'
+import {
+  fetchAllSubmissionByAssignment,
+  loadSubmissionPath
+} from '@/api/submissions'
 import { useRouter, useRoute } from 'vue-router'
+
 
 const router = useRouter()
 const route = useRoute()
@@ -68,25 +73,52 @@ const back = () => {
 
 // Select a local folder where the submissions are stroed
 
-const folderInput = ref(null)
-const selectFolder = () => {
-  folderInput.value.click()
+// const folderInput = ref(null)
+// const selectFolder = () => {
+//   folderInput.value.click()
+// }
+
+// const handleFolderSelection = (event) => {
+//   const files = event.target.files
+//   if (files.length > 0) {
+//     Array.from(files).forEach(file => {
+//       console.log(file.webkitRelativePath); // Shows the path relative to the root of the selected directory
+//     });
+//   }
+// }
+
+const modalAddActive = ref(false)
+
+const submissionFolder = ref("")
+
+const selectSubmissions = async () => {
+  console.log(submissionFolder.value)
+  // Send the path to backend
+  await loadSubmissionPath(submissionFolder)
+  modalAddActive.value = false
 }
 
-const handleFolderSelection = (event) => {
-  const files = event.target.files
-  console.log(files)
-}
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitle :icon="mdiBookAccountOutline" title="Submissions" main>
-        <BaseButton target="_blank" :icon="mdiSelect" label="Select Submissions" color="contrast" rounded-full small
-          @click="selectFolder" />
-        <input ref="folderInput" webkitdirectory type="file" class="hidden" @change="handleFolderSelection" />
+        <BaseButton target="_blank" :icon="mdiSelect" label="Load Submissions" color="contrast" rounded-full small
+          @click="modalAddActive = true" />
+        <!-- <input ref="folderInput" webkitdirectory type="file" class="hidden" @change="handleFolderSelection" /> -->
       </SectionTitle>
+
+      <CardBoxModal v-model="modalAddActive" title="Enter Path" button="info" has-cancel button-label="Load"
+        @submitForm="selectSubmissions">
+        <p>Please enter the path of the submission folder.</p>
+        <form @submit.prevent="selectSubmissions">
+          <div class="flex items-center mb-2">
+            <label :class="`flex-none`" :style="`width: 15%`">Path</label>
+            <input v-model="submissionFolder" type="text" required>
+          </div>
+        </form>
+      </CardBoxModal>
 
       <CardBox class="mb-6" has-table>
         <div>

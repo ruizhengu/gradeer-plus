@@ -1,5 +1,21 @@
 package tech.clegg.gradeer;
 
+import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import tech.clegg.gradeer.api.GradeerClient;
+import tech.clegg.gradeer.api.GradeerStompSessionHandler;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.UnitTestCheck;
@@ -25,16 +41,20 @@ import tech.clegg.gradeer.compilation.JavaCompiler;
 import tech.clegg.gradeer.error.ErrorCode;
 import tech.clegg.gradeer.solution.Solution;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class Gradeer
-{
+public class Gradeer {
     private Configuration configuration;
 
     private Collection<Solution> modelSolutions = new ArrayList<>();
@@ -42,70 +62,96 @@ public class Gradeer
     private Collection<Solution> mutantSolutions = new ArrayList<>();
     private Collection<Check> checks = new ArrayList<>();
 
-    public static void main(String[] args)
-    {
-        // Read CLI
-        CLIReader cliReader = new CLIReader(args);
-        if(cliReader.hasOption(CLIOptions.HELP))
-        {
-            cliReader.printHelp();
-            System.exit(ErrorCode.HELP_DISPLAYED.getCode());
-        }
+    public static void main(String[] args) throws URISyntaxException, InterruptedException, ExecutionException {
+//        GradeerClient client = new GradeerClient(new URI("ws://localhost:8080/ws"));
+//        client.connect();
+//        while (!client.isOpen()) {
+//            Thread.sleep(100);
+//        }
+//        client.send("hello");
 
-        try
-        {
-            // Setup config
-//            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
+//        List<Transport> transports = Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()));
+//        SockJsClient sockJsClient = new SockJsClient(transports);
+//        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+        String url = "ws://localhost:8080/ws";
+//        StompSession session = stompClient.connectAsync(url, new StompSessionHandlerAdapter() {}).get();
+//        session.subscribe("/topic/paths", new StompSessionHandlerAdapter() {
+//            @Override
+//            public void handleFrame(StompHeaders headers, Object payload) {
+//                System.out.println("Received: " + payload);
+//            }
+//        });
 
-            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
-
-            if (Files.notExists(configJSON))
-            {
-                System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
-                System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+        WebSocketClient webSocketClient = new StandardWebSocketClient();
+        WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
+        stompClient.setMessageConverter(new StringMessageConverter());
+        StompSessionHandler sessionHandler = new GradeerStompSessionHandler();
+        stompClient.connect(url, sessionHandler);
+        StompSession session = stompClient.connectAsync(url, new StompSessionHandlerAdapter() {}).get();
+        session.subscribe("/topic/paths", new StompSessionHandlerAdapter() {
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                super.handleFrame(headers, payload);
             }
-            Configuration config = new Configuration(configJSON);
+        });
 
-            // Add included / excluded solutions
-            config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
-            config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+//        session.send("/app/sendPath", "Your Path Here");
 
-            // Start Gradeer
-            Gradeer gradeer = new Gradeer(config);
-            gradeer.loadMutantSolutions(cliReader);
-
-            ResultsGenerator resultsGenerator = gradeer.startEnvironment();
-            resultsGenerator.run();
-
-            System.out.println("Completed grading for config " + configJSON.getFileName());
-            config.getTimer().end();
-
-        } catch (IllegalArgumentException e)
-        {
-            // No config file
-            e.printStackTrace();
-            System.err.println("No configuration file defined, exiting... ");
-            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
-        }
+//        // Read CLI
+//        CLIReader cliReader = new CLIReader(args);
+//        if (cliReader.hasOption(CLIOptions.HELP)) {
+//            cliReader.printHelp();
+//            System.exit(ErrorCode.HELP_DISPLAYED.getCode());
+//        }
+//
+//        try {
+//            // Setup config
+////            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
+//
+//            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
+//
+//            if (Files.notExists(configJSON)) {
+//                System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
+//                System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+//            }
+//            Configuration config = new Configuration(configJSON);
+//
+//            // Add included / excluded solutions
+//            config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
+//            config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+//
+//            // Start Gradeer
+//            Gradeer gradeer = new Gradeer(config);
+//            gradeer.loadMutantSolutions(cliReader);
+//
+//            ResultsGenerator resultsGenerator = gradeer.startEnvironment();
+//            resultsGenerator.run();
+//
+//            System.out.println("Completed grading for config " + configJSON.getFileName());
+//            config.getTimer().end();
+//
+//        } catch (IllegalArgumentException e) {
+//            // No config file
+//            e.printStackTrace();
+//            System.err.println("No configuration file defined, exiting... ");
+//            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+//        }
 
     }
 
-    public Gradeer(Configuration config)
-    {
+    public Gradeer(Configuration config) {
         configuration = config;
         Environment.init();
         init();
     }
 
-    private void init()
-    {
+    private void init() {
         loadModelSolutions();
         loadStudentSolutions();
         configuration.getTimer().split("Finished solution loading.");
     }
 
-    public ResultsGenerator startEnvironment()
-    {
+    public ResultsGenerator startEnvironment() {
         ResultsGenerator resultsGenerator = new ResultsGenerator(studentSolutions, configuration);
 
         //  Load checks from JSON
@@ -115,15 +161,13 @@ public class Gradeer
         loadTests(checks);
 
         // Report & remove Checks that fail on a model solution
-        if(configuration.isVerifyChecksWithModelSolutions())
-        {
+        if (configuration.isVerifyChecksWithModelSolutions()) {
             CheckValidator checkValidator = new CheckValidator(modelSolutions, configuration);
             checks = checkValidator.filterValidChecks(checks);
         }
 
         // If mutants are present, run checks on them and report any mutants that are not detected by any checks
-        if(!mutantSolutions.isEmpty())
-        {
+        if (!mutantSolutions.isEmpty()) {
             mutationAnalysis();
         }
 
@@ -134,8 +178,7 @@ public class Gradeer
         return resultsGenerator;
     }
 
-    private void mutationAnalysis()
-    {
+    private void mutationAnalysis() {
         System.out.println("Performing mutation analysis...");
 
         // Run automated checks on mutants
@@ -153,8 +196,7 @@ public class Gradeer
         // Summarise mutation performance for each check
         DelayedFileWriter f = new DelayedFileWriter();
         f.addLine("Check, % mutants detected by check, average base score of check for mutants");
-        for (Check c : autoChecks)
-        {
+        for (Check c : autoChecks) {
             // Display percent of mutants that check detects (i.e base score < 1.0)
             double detectedCount = mutantSolutions.stream().map(m -> m.getCheckResult(c).getUnweightedScore())
                     .filter(d -> d < 1.0)
@@ -174,13 +216,11 @@ public class Gradeer
         f.write(Paths.get(configuration.getOutputDir() + File.separator + "mutantCheckPerformance.csv"));
 
 
-
         // Store & display mutants that are not detected by any checks
         Collection<Solution> undetectedMutants = mutantSolutions.stream()
                 .filter(m -> m.getAllCheckResults().stream().noneMatch(cr -> cr.getUnweightedScore() < 1.0))
                 .collect(Collectors.toList());
-        if(!undetectedMutants.isEmpty())
-        {
+        if (!undetectedMutants.isEmpty()) {
             System.out.println("Mutants not detected by any checks: ");
             System.out.println(Arrays.toString(undetectedMutants.stream().map(Solution::getIdentifier).toArray()));
 
@@ -194,19 +234,16 @@ public class Gradeer
             System.err.println("Some mutants were not detected by any checks. " +
                     "Please review the output, and consider making the checks more robust.");
             System.exit(ErrorCode.MUTANTS_UNDETECTED.getCode());
-        }
-        else
-        {
+        } else {
             System.out.println("All mutants detected by at least one check.");
         }
     }
 
-    private void loadTests(Collection<Check> checks)
-    {
+    private void loadTests(Collection<Check> checks) {
         // Get existing UnitTestChecks to attach TestSuites to
         Collection<UnitTestCheck> unitTestChecks = checks.stream()
                 .filter(c -> c.getClass().equals(UnitTestCheck.class))
-                .map(c -> (UnitTestCheck)c)
+                .map(c -> (UnitTestCheck) c)
                 .collect(Collectors.toList());
 
         // Load and compile tests
@@ -214,12 +251,11 @@ public class Gradeer
         Collection<JUnitTestSource> testSources = new TestSuiteLoader(getConfiguration().getTestsDir()).getTestSuites();
         System.out.println("Compiling " + testSources.size() + " unit tests...");
         JavaCompiler compiler = JavaCompiler.createCompiler(getConfiguration());
-        if(getModelSolutions().size() < 1)
+        if (getModelSolutions().size() < 1)
             System.err.println("No compiled model solutions available.");
         Solution modelSolution = new ArrayList<>(getModelSolutions()).get(0);
         if (getConfiguration().getTestDependenciesDir() != null &&
-                Files.exists(getConfiguration().getTestDependenciesDir()))
-        {
+                Files.exists(getConfiguration().getTestDependenciesDir())) {
             System.out.println("Compiling test dependencies at " + getConfiguration().getTestDependenciesDir());
             compiler.compileDir(getConfiguration().getTestDependenciesDir(), modelSolution);
         }
@@ -227,8 +263,7 @@ public class Gradeer
 
 
         // Populate configuration with test sources
-        for (TestSourceFile testSourceFile : testSources)
-        {
+        for (TestSourceFile testSourceFile : testSources) {
             configuration.addTestSourceFile(JUnitTestEngine.class, testSourceFile);
         }
 
@@ -241,21 +276,18 @@ public class Gradeer
                 (UnitTestPreProcessorResults) modelSolution.getPreProcessorResultsOfType(UnitTestPreProcessor.class);
         Collection<UnitTest> identifiedUnitTests = preProcessorResults.getExecutedUnitTests();
         Collection<UnitTest> linkedUnitTests = new HashSet<>();
-        for (UnitTestCheck parsedCheck : unitTestChecks)
-        {
+        for (UnitTestCheck parsedCheck : unitTestChecks) {
             Optional<UnitTest> matchingTest = identifiedUnitTests.stream()
                     .filter(parsedCheck::matchesUnitTest)
                     .findFirst();
-            if (matchingTest.isPresent())
-            {
+            if (matchingTest.isPresent()) {
                 parsedCheck.setUnitTest(matchingTest.get());
                 linkedUnitTests.add(matchingTest.get());
             }
         }
 
         // Generate UnitTestChecks from unlinked tests
-        if (configuration.isAutoGenerateUnitTestChecks())
-        {
+        if (configuration.isAutoGenerateUnitTestChecks()) {
             // Identify tests that are not yet linked
             Collection<UnitTest> unlinkedUnitTests = new HashSet<>(identifiedUnitTests);
             unlinkedUnitTests.removeAll(linkedUnitTests);
@@ -265,23 +297,18 @@ public class Gradeer
     }
 
 
-    private List<Solution> loadSolutions(Path solutionsRootDir)
-    {
+    private List<Solution> loadSolutions(Path solutionsRootDir) {
         List<Solution> solutions = new ArrayList<>();
-        try
-        {
+        try {
             Files.newDirectoryStream(solutionsRootDir).forEach(
                     p -> {
-                        if(Files.isDirectory(p))
-                        {
+                        if (Files.isDirectory(p)) {
                             Solution s = new Solution(p);
                             s.checkForMissingSources(getConfiguration().getRequiredClasses());
                             solutions.add(s);
                         }
                     });
-        }
-        catch (IOException ioEx)
-        {
+        } catch (IOException ioEx) {
             ioEx.printStackTrace();
             System.err.println("Solution directories in " + solutionsRootDir + " could not be loaded.");
         }
@@ -296,36 +323,32 @@ public class Gradeer
             // TODO Could add a socket to trigger the compilation when upload the submissions
             compiler.compile(solution);
         });
-        
+
         // Merge the source files of each Solution if enabled
-        if(configuration.getMergedSolutionsDir() != null)
+        if (configuration.getMergedSolutionsDir() != null)
             new MergedSolutionWriter(configuration, solutions).run();
 
         return solutions;
     }
 
-    private void loadStudentSolutions()
-    {
+    private void loadStudentSolutions() {
         studentSolutions = loadSolutions(configuration.getStudentSolutionsDir());
         System.out.println(studentSolutions.size() + " students' solutions loaded.");
 
-        for (Solution s : studentSolutions)
-        {
-            if(!s.isCompiled())
+        for (Solution s : studentSolutions) {
+            if (!s.isCompiled())
                 System.err.println("[SEVERE] Student solution '" + s.getIdentifier() + "' was not compiled.");
         }
 
         // Filter solutions
         // Include
-        if(!configuration.getIncludeSolutions().isEmpty())
-        {
+        if (!configuration.getIncludeSolutions().isEmpty()) {
             studentSolutions = studentSolutions.stream()
                     .filter(s -> configuration.getIncludeSolutions().contains(s.getIdentifier()))
                     .collect(Collectors.toSet());
         }
         // Exclude
-        if(!configuration.getExcludeSolutions().isEmpty())
-        {
+        if (!configuration.getExcludeSolutions().isEmpty()) {
             studentSolutions = studentSolutions.stream()
                     .filter(s -> !configuration.getExcludeSolutions().contains(s.getIdentifier()))
                     .collect(Collectors.toSet());
@@ -334,19 +357,16 @@ public class Gradeer
 
     }
 
-    private void loadModelSolutions()
-    {
+    private void loadModelSolutions() {
         modelSolutions = loadSolutions(configuration.getModelSolutionsDir());
-        for (Solution m : modelSolutions)
-        {
-            if(!m.isCompiled())
+        for (Solution m : modelSolutions) {
+            if (!m.isCompiled())
                 System.err.println("[SEVERE] Model solution '" + m.getIdentifier() + "' was not compiled.");
         }
     }
 
-    private void loadMutantSolutions(CLIReader cliReader)
-    {
-        if(!cliReader.hasOption(CLIOptions.MUTANT_SOLUTIONS))
+    private void loadMutantSolutions(CLIReader cliReader) {
+        if (!cliReader.hasOption(CLIOptions.MUTANT_SOLUTIONS))
             return;
 
         Path dir = configuration.loadLocalOrAbsolutePath(cliReader.getInputValue(CLIOptions.MUTANT_SOLUTIONS));
@@ -361,11 +381,9 @@ public class Gradeer
             return;
         Solution model = modelSolutions.stream().findFirst().get();
         Collection<JavaSource> modelSources = model.getSources();
-        for (Solution m : mutantSolutions)
-        {
+        for (Solution m : mutantSolutions) {
             // Copy solutions; files already present are automatically skipped
-            for (JavaSource src : modelSources)
-            {
+            for (JavaSource src : modelSources) {
                 src.copyToDifferentSolution(model, m);
             }
 
@@ -376,23 +394,19 @@ public class Gradeer
 
     }
 
-    public Configuration getConfiguration()
-    {
+    public Configuration getConfiguration() {
         return configuration;
     }
 
-    public Collection<Solution> getStudentSolutions()
-    {
+    public Collection<Solution> getStudentSolutions() {
         return studentSolutions;
     }
 
-    public Collection<Solution> getModelSolutions()
-    {
+    public Collection<Solution> getModelSolutions() {
         return modelSolutions;
     }
 
-    public Collection<Check> getChecks()
-    {
+    public Collection<Check> getChecks() {
         return checks;
     }
 

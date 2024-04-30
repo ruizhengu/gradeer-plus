@@ -1,8 +1,8 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue'
 import {
-  mdiAccountHardHat,
-  mdiFountainPenTip
+  mdiTypewriter,
+  mdiNoteMultipleOutline
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
@@ -57,7 +57,7 @@ const enterSubmissionView = (id) => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitle :icon="mdiAccountHardHat" title="Markers" main>
+      <SectionTitle :icon="mdiTypewriter" title="Markers" main>
       </SectionTitle>
 
       <CardBox class="mb-6" has-table>
@@ -93,7 +93,7 @@ const enterSubmissionView = (id) => {
 
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="info" :icon="mdiFountainPenTip" small label="Marking"
+                    <BaseButton color="info" :icon="mdiNoteMultipleOutline" small label="Submissions"
                       @click="enterSubmissionView(assignment.id)" />
                   </BaseButtons>
                 </td>

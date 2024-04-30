@@ -2,7 +2,7 @@ import {
   mdiAccountCircle,
   mdiLock,
   mdiCalendarCheck,
-  mdiAccountHardHat,
+  mdiTypewriter,
   mdiAccountMultiple
 } from '@mdi/js'
 
@@ -15,7 +15,7 @@ export default [
   {
     to: '/markers',
     label: 'Markers',
-    icon: mdiAccountHardHat
+    icon: mdiTypewriter
   },
   {
     to: '/users',
