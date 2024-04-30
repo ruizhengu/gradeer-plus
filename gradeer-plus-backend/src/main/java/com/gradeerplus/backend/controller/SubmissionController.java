@@ -11,6 +11,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -39,8 +41,9 @@ public class SubmissionController {
 
     @PostMapping("/loadPath")
     public ResponseEntity<String> loadSubmissionPath(@RequestBody String path) throws Exception {
-        System.out.println("submission controller " + path);
-        rabbitTemplate.convertAndSend("someQueue", path);
-        return ResponseEntity.ok("Path: " + path);
+        String decodedPath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+        System.out.println("submission controller " + decodedPath);
+        rabbitTemplate.convertAndSend("someQueue", decodedPath);
+        return ResponseEntity.ok("Path: " + decodedPath);
     }
 }

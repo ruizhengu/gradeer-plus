@@ -1,4 +1,3 @@
-import { mdiCrossBolnisi } from '@mdi/js'
 import axios from 'axios'
 
 export const fetchAllSubmissionByAssignment = async (id) => {
@@ -48,7 +47,7 @@ export const getAssignmentChecksById = async (id) => {
 
 export const loadSubmissionPath = async (path) => {
   try {
-    return await axios.post('http://localhost:8080/submissions/loadPath', JSON.stringify(path.value)).then(response => response.data)
+    return await axios.post('http://localhost:8080/submissions/loadPath', encodeURIComponent(path.value)).then(response => response.data)
   } catch (error) {
     throw {
       code: error.code,
