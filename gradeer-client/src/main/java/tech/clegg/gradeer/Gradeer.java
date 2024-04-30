@@ -1,9 +1,6 @@
 package tech.clegg.gradeer;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+import tech.clegg.gradeer.api.WorkerSubmission;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.UnitTestCheck;
@@ -31,12 +28,10 @@ import tech.clegg.gradeer.solution.Solution;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
@@ -47,50 +42,37 @@ public class Gradeer {
     private Collection<Solution> studentSolutions = new ArrayList<>();
     private Collection<Solution> mutantSolutions = new ArrayList<>();
     private Collection<Check> checks = new ArrayList<>();
-    private final static String QUEUE_NAME = "someQueue";
 
-    public static void main(String[] args) throws URISyntaxException, InterruptedException, ExecutionException, IOException, TimeoutException {
+    public static void main(String[] args) {
+        // Read CLI
+        CLIReader cliReader = new CLIReader(args);
+        if (cliReader.hasOption(CLIOptions.HELP)) {
+            cliReader.printHelp();
+            System.exit(ErrorCode.HELP_DISPLAYED.getCode());
+        }
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+        try {
+            // Setup config
+//            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println();
-            System.out.println(" [x] Received '" + message + "'");
-        };
-        channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {
-        });
+            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
 
-//        // Read CLI
-//        CLIReader cliReader = new CLIReader(args);
-//        if (cliReader.hasOption(CLIOptions.HELP)) {
-//            cliReader.printHelp();
-//            System.exit(ErrorCode.HELP_DISPLAYED.getCode());
-//        }
-//
-//        try {
-//            // Setup config
-////            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
-//
-//            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
-//
-//            if (Files.notExists(configJSON)) {
-//                System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
-//                System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
-//            }
-//            Configuration config = new Configuration(configJSON);
-//
-//            // Add included / excluded solutions
-//            config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
-//            config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
-//
-//            // Start Gradeer
-//            Gradeer gradeer = new Gradeer(config);
+            if (Files.notExists(configJSON)) {
+                System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
+                System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+            }
+            Configuration config = new Configuration(configJSON);
+
+            // Add included / excluded solutions
+            config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
+            config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+
+            // Start Gradeer
+            Gradeer gradeer = new Gradeer(config);
+
+            WorkerSubmission workerSubmission = new WorkerSubmission();
+            workerSubmission.receiving();
+
 //            gradeer.loadMutantSolutions(cliReader);
 //
 //            ResultsGenerator resultsGenerator = gradeer.startEnvironment();
@@ -98,14 +80,17 @@ public class Gradeer {
 //
 //            System.out.println("Completed grading for config " + configJSON.getFileName());
 //            config.getTimer().end();
-//
-//        } catch (IllegalArgumentException e) {
-//            // No config file
-//            e.printStackTrace();
-//            System.err.println("No configuration file defined, exiting... ");
-//            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
-//        }
 
+        } catch (IllegalArgumentException e) {
+            // No config file
+            e.printStackTrace();
+            System.err.println("No configuration file defined, exiting... ");
+            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+        } catch (IOException | TimeoutException e) {
+            // Message queue issue
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     public Gradeer(Configuration config) {
@@ -305,6 +290,7 @@ public class Gradeer {
         System.out.println(studentSolutions.size() + " students' solutions loaded.");
 
         for (Solution s : studentSolutions) {
+            System.out.println(s.getIdentifier());
             if (!s.isCompiled())
                 System.err.println("[SEVERE] Student solution '" + s.getIdentifier() + "' was not compiled.");
         }

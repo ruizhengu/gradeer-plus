@@ -92,9 +92,10 @@ const modalAddActive = ref(false)
 const submissionFolder = ref("")
 
 const selectSubmissions = async () => {
-  console.log(submissionFolder.value)
   // Send the path to backend
-  await loadSubmissionPath(submissionFolder)
+  await loadSubmissionPath(submissionFolder).then(response => {
+    console.log(response)
+  })
   modalAddActive.value = false
 }
 

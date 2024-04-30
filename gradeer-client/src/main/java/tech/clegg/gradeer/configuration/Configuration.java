@@ -13,8 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class Configuration
-{
+public class Configuration {
 
     private LogFile logFile;
     private TimerService timer;
@@ -75,10 +74,8 @@ public class Configuration
     private boolean removeInvalidChecks; // Invalid checks (i.e. fail model solution) are only reported if false
 
 
-    public Configuration(Path jsonFile)
-    {
-        try
-        {
+    public Configuration(Path jsonFile) {
+        try {
             // Load json file's parent dir as default root dir
             rootDir = jsonFile.getParent();
             // Load config variables from json
@@ -88,19 +85,16 @@ public class Configuration
             logFile = new LogFile(Paths.get(outputDir + File.separator + "logOutput.log"));
             // Timer
             timer = new TimerService(Paths.get(outputDir + File.separator + "timer.csv"), jsonFile);
-        }
-        catch (IOException ioEx)
-        {
+        } catch (IOException ioEx) {
             ioEx.printStackTrace();
             System.err.println("Could not load configuration!");
             System.exit(1);
         }
     }
 
-    private void loadFromJSON(ConfigurationJSON json)
-    {
+    private void loadFromJSON(ConfigurationJSON json) {
         // Overwrite root dir if specified
-        if(json.rootDirPath != null)
+        if (json.rootDirPath != null)
             rootDir = Paths.get(json.rootDirPath);
 
         // Load student solutions dir. If it doesn't exist directly, it's likely to be a local directory
@@ -122,42 +116,41 @@ public class Configuration
         libDir = loadLocalOrAbsolutePath(json.libDir);
 
         checkJSONs = new HashSet<>();
-        for (String cj : json.checkJSONs)
-        {
+        for (String cj : json.checkJSONs) {
             checkJSONs.add(loadLocalOrAbsolutePath(cj));
         }
 
         loadBuiltLibComponents();
 
-        if(json.perTestSuiteTimeout > 0)
+        if (json.perTestSuiteTimeout > 0)
             perTestSuiteTimeout = json.perTestSuiteTimeout * 1000; // Convert seconds to ms
-        if(json.pmdRulesets != null && json.pmdRulesets.length > 0)
+        if (json.pmdRulesets != null && json.pmdRulesets.length > 0)
             pmdRulesets = json.pmdRulesets;
 
         checkstyleXml = loadLocalOrAbsolutePath(json.checkstyleXml);
 
         outputDir = Paths.get(rootDir + File.separator + "output");
-        if(json.outputDirPath != null)
+        if (json.outputDirPath != null)
             outputDir = loadLocalOrAbsolutePath(json.outputDirPath);
 
         testOutputDir = Paths.get(outputDir + File.separator + "testOutput");
-        if(json.testOutputDirPath != null)
+        if (json.testOutputDirPath != null)
             testOutputDir = loadLocalOrAbsolutePath(json.testOutputDirPath);
 
         mergedSolutionsDir = Paths.get(outputDir + File.separator + "mergedSolutions");
-        if(json.mergedSolutionsDirPath != null)
+        if (json.mergedSolutionsDirPath != null)
             mergedSolutionsDir = loadLocalOrAbsolutePath(json.mergedSolutionsDirPath);
 
         mergedSolutionsBlacklistPackage = null;
-        if(json.mergedSolutionsBlacklistPackage != null)
+        if (json.mergedSolutionsBlacklistPackage != null)
             mergedSolutionsBlacklistPackage = json.mergedSolutionsBlacklistPackage;
 
         solutionCapturedOutputDir = Paths.get(outputDir + File.separator + "solutionCapturedOutput");
-        if(json.solutionCapturedOutputDirPath != null)
+        if (json.solutionCapturedOutputDirPath != null)
             solutionCapturedOutputDir = loadLocalOrAbsolutePath(json.solutionCapturedOutputDirPath);
 
         preManualJavaClassesToExecute = new ArrayList<>();
-        if(json.preManualJavaClassesToExecute != null && json.preManualJavaClassesToExecute.length > 0)
+        if (json.preManualJavaClassesToExecute != null && json.preManualJavaClassesToExecute.length > 0)
             preManualJavaClassesToExecute.addAll(Arrays.asList(json.preManualJavaClassesToExecute));
 
         inspectionCommand = json.inspectionCommand;
@@ -176,47 +169,40 @@ public class Configuration
         removeInvalidChecks = json.removeInvalidChecks;
     }
 
-    private Collection<String> loadJsonStringArray(String[] jsonStringArray)
-    {
-        if(jsonStringArray == null || jsonStringArray.length < 1)
+    private Collection<String> loadJsonStringArray(String[] jsonStringArray) {
+        if (jsonStringArray == null || jsonStringArray.length < 1)
             return Collections.emptyList();
 
         return Arrays.asList(jsonStringArray);
 
     }
 
-    private void loadRequiredClasses(ConfigurationJSON json)
-    {
+    private void loadRequiredClasses(ConfigurationJSON json) {
         String[] classStrings = json.requiredClasses;
 
-        if(classStrings == null)
+        if (classStrings == null)
             return;
 
         requiredClasses.addAll(Arrays.asList(classStrings));
     }
 
-    private void loadBuiltLibComponents()
-    {
+    private void loadBuiltLibComponents() {
         builtLibComponents = new HashSet<>();
 
-        if(!pathExists(libDir))
-        {
+        if (!pathExists(libDir)) {
             System.err.println("No built lib components defined or accessible; skipping...");
             return;
         }
         System.out.println("Loading built lib components for " + libDir);
-        try
-        {
+        try {
             Files.walk(libDir).forEach(System.out::println);
             Files.walk(libDir).filter(p ->
-                    com.google.common.io.Files.getFileExtension(p.toString()).equals("jar"))
+                            com.google.common.io.Files.getFileExtension(p.toString()).equals("jar"))
                     .forEach(builtLibComponents::add);
             Files.walk(libDir).filter(p ->
-                    com.google.common.io.Files.getFileExtension(p.toString()).equals("class"))
+                            com.google.common.io.Files.getFileExtension(p.toString()).equals("class"))
                     .forEach(builtLibComponents::add);
-        }
-        catch (IOException ioEx)
-        {
+        } catch (IOException ioEx) {
             ioEx.printStackTrace();
         }
         builtLibComponents.forEach(p -> System.out.println("Loaded built lib component " + p));
@@ -224,156 +210,129 @@ public class Configuration
 
     /**
      * Load a path. If the path doesn't exist in an absolute context, it's likely to be a local directory
+     *
      * @param uri the path to load
      * @return the specified path, in either the absolute context, or the local context if this doesn't exist
      */
-    public Path loadLocalOrAbsolutePath(String uri)
-    {
-        if(uri == null)
+    public Path loadLocalOrAbsolutePath(String uri) {
+        if (uri == null)
             return null;
 
         Path p = Paths.get(uri);
-        if(Files.notExists(p))
+        if (Files.notExists(p))
             p = Paths.get(rootDir.toString() + File.separator + uri);
         return p;
     }
 
-    public Path getRootDir()
-    {
+    public Path getRootDir() {
         return rootDir;
     }
 
-    public TimerService getTimer()
-    {
+    public TimerService getTimer() {
         return timer;
     }
 
-    public Collection<Path> getCheckJSONs()
-    {
+    public Collection<Path> getCheckJSONs() {
         return checkJSONs;
     }
 
-    public Path getStudentSolutionsDir()
-    {
+    public Path getStudentSolutionsDir() {
         return studentSolutionsDir;
     }
 
-    public Path getModelSolutionsDir()
-    {
+    public Path getModelSolutionsDir() {
         return modelSolutionsDir;
     }
 
-    public Path getTestsDir()
-    {
+    public Path getTestsDir() {
         return testsDir;
     }
 
-    public JUnitVersion getJunitVersion()
-    {
+    public JUnitVersion getJunitVersion() {
         return junitVersion;
     }
 
-    public boolean isAutoGenerateUnitTestChecks()
-    {
+    public boolean isAutoGenerateUnitTestChecks() {
         return autoGenerateUnitTestChecks;
     }
 
-    public Path getTestDependenciesDir()
-    {
+    public Path getTestDependenciesDir() {
         return testDependenciesDir;
     }
 
-    public Path getSourceDependenciesDir()
-    {
+    public Path getSourceDependenciesDir() {
         return sourceDependenciesDir;
     }
 
-    public Path getRuntimeDependenciesDir()
-    {
+    public Path getRuntimeDependenciesDir() {
         return runtimeDependenciesDir;
     }
 
-    public Path getLibDir()
-    {
+    public Path getLibDir() {
         return libDir;
     }
 
-    public Collection<Path> getBuiltLibComponents()
-    {
+    public Collection<Path> getBuiltLibComponents() {
         return builtLibComponents;
     }
 
-    public int getPerTestSuiteTimeout()
-    {
+    public int getPerTestSuiteTimeout() {
         return perTestSuiteTimeout;
     }
 
-    public String[] getPmdRulesets()
-    {
+    public String[] getPmdRulesets() {
         return pmdRulesets;
     }
 
-    public Path getCheckstyleXml()
-    {
+    public Path getCheckstyleXml() {
         return checkstyleXml;
     }
 
-    public Path getTestOutputDir()
-    {
+    public Path getTestOutputDir() {
         return testOutputDir;
     }
 
-    public Path getOutputDir()
-    {
+    public Path getOutputDir() {
         return outputDir;
     }
 
-    public Path getMergedSolutionsDir()
-    {
+    public Path getMergedSolutionsDir() {
         return mergedSolutionsDir;
     }
 
-    public String getMergedSolutionsBlacklistPackage()
-    {
+    public String getMergedSolutionsBlacklistPackage() {
         return mergedSolutionsBlacklistPackage;
     }
 
-    public Path getSolutionCapturedOutputDir()
-    {
+    public Path getSolutionCapturedOutputDir() {
         return solutionCapturedOutputDir;
     }
 
-    public List<ClassExecutionTemplate> getPreManualJavaClassesToExecute()
-    {
+    public List<ClassExecutionTemplate> getPreManualJavaClassesToExecute() {
         return preManualJavaClassesToExecute;
     }
 
-    public String getInspectionCommand()
-    {
+    public String getInspectionCommand() {
         return inspectionCommand;
     }
 
-    public LogFile getLogFile()
-    {
+    public LogFile getLogFile() {
         return logFile;
     }
 
-    public static boolean pathExists(Path path)
-    {
-        if(path == null)
+    public static boolean pathExists(Path path) {
+        if (path == null)
             return false;
-        if(Files.notExists(path))
+        if (Files.notExists(path))
             return false;
         return true;
     }
 
-    public boolean isVerifyChecksWithModelSolutions()
-    {
+    public boolean isVerifyChecksWithModelSolutions() {
         return verifyChecksWithModelSolutions;
     }
 
-    public boolean isForceRecompilation()
-    {
+    public boolean isForceRecompilation() {
         return forceRecompilation;
     }
 
@@ -381,43 +340,35 @@ public class Configuration
         return multiThreadingEnabled;
     }
 
-    public Path getSolutionCheckResultsStoragePath()
-    {
+    public Path getSolutionCheckResultsStoragePath() {
         return Paths.get(getOutputDir() + File.separator + "perSolutionCheckResults");
     }
 
-    public boolean isCheckResultRecoveryEnabled()
-    {
+    public boolean isCheckResultRecoveryEnabled() {
         return checkResultRecoveryEnabled;
     }
 
-    public boolean isWaitForSolutionExecutionToFinishEnabled()
-    {
+    public boolean isWaitForSolutionExecutionToFinishEnabled() {
         return waitForSolutionExecutionToFinishEnabled;
     }
 
-    public Collection<String> getRequiredClasses()
-    {
+    public Collection<String> getRequiredClasses() {
         return requiredClasses;
     }
 
-    public Collection<String> getIncludeSolutions()
-    {
+    public Collection<String> getIncludeSolutions() {
         return includeSolutions;
     }
 
-    public Collection<String> getExcludeSolutions()
-    {
+    public Collection<String> getExcludeSolutions() {
         return excludeSolutions;
     }
 
-    public boolean isRemoveInvalidChecks()
-    {
+    public boolean isRemoveInvalidChecks() {
         return removeInvalidChecks;
     }
 
-    public void addTestSourceFile(Class<? extends TestEngine> testEngineClass, TestSourceFile testSourceFile)
-    {
+    public void addTestSourceFile(Class<? extends TestEngine> testEngineClass, TestSourceFile testSourceFile) {
         // Use existing collection for the TestEngine type if one exists
         Collection<TestSourceFile> matchingTestSources = new HashSet<>();
         if (testSourceFilesMap.containsKey(testEngineClass))
@@ -430,20 +381,18 @@ public class Configuration
         testSourceFilesMap.put(testEngineClass, matchingTestSources);
     }
 
-    public Map<Class<? extends TestEngine>, Collection<TestSourceFile>> getTestSourceFilesMap()
-    {
+    public Map<Class<? extends TestEngine>, Collection<TestSourceFile>> getTestSourceFilesMap() {
         return testSourceFilesMap;
     }
 
-    public enum JUnitVersion { JUNIT4, JUNIT5 }
+    public enum JUnitVersion {JUNIT4, JUNIT5}
 
     public JUnitVersion getJUnitVersion() {
         return junitVersion;
     }
 }
 
-class ConfigurationJSON
-{
+class ConfigurationJSON {
     String rootDirPath;
     String studentSolutionsDirPath;
     String modelSolutionsDirPath;
@@ -481,8 +430,7 @@ class ConfigurationJSON
     String[] excludeSolutions;
     boolean removeInvalidChecks = true;
 
-    public static ConfigurationJSON loadJSON(Path jsonFile) throws FileNotFoundException
-    {
+    public static ConfigurationJSON loadJSON(Path jsonFile) throws FileNotFoundException {
         Gson gson = new Gson();
         Reader jsonReader = new FileReader(jsonFile.toFile());
         return gson.fromJson(jsonReader, ConfigurationJSON.class);
