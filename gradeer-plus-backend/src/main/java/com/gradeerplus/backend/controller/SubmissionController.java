@@ -3,6 +3,7 @@ package com.gradeerplus.backend.controller;
 import com.gradeerplus.backend.entity.Submission;
 import com.gradeerplus.backend.service.impl.SubmissionServiceImpl;
 import jakarta.annotation.Resource;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +18,7 @@ import java.util.List;
 public class SubmissionController {
 
     @Autowired
-    private SimpMessagingTemplate template;
+    private RabbitTemplate rabbitTemplate;
     @Resource
     private SubmissionServiceImpl submissionServiceImpl;
 
@@ -37,11 +38,9 @@ public class SubmissionController {
     }
 
     @PostMapping("/loadPath")
-//    @MessageMapping("/sendPath")
-//    @SendTo("/topic/paths")
     public ResponseEntity<String> loadSubmissionPath(@RequestBody String path) throws Exception {
-        System.out.println("submission controller " +  path);
-        template.convertAndSend("/topic/paths", path);
+        System.out.println("submission controller " + path);
+        rabbitTemplate.convertAndSend("someQueue", path);
         return ResponseEntity.ok("Path: " + path);
     }
 }

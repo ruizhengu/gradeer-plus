@@ -1,21 +1,9 @@
 package tech.clegg.gradeer;
 
-import org.springframework.messaging.converter.StringMessageConverter;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketHttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.SockJsClient;
-import org.springframework.web.socket.sockjs.client.Transport;
-import org.springframework.web.socket.sockjs.client.WebSocketTransport;
-import tech.clegg.gradeer.api.GradeerClient;
-import tech.clegg.gradeer.api.GradeerStompSessionHandler;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.UnitTestCheck;
@@ -41,17 +29,15 @@ import tech.clegg.gradeer.compilation.JavaCompiler;
 import tech.clegg.gradeer.error.ErrorCode;
 import tech.clegg.gradeer.solution.Solution;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class Gradeer {
@@ -61,41 +47,24 @@ public class Gradeer {
     private Collection<Solution> studentSolutions = new ArrayList<>();
     private Collection<Solution> mutantSolutions = new ArrayList<>();
     private Collection<Check> checks = new ArrayList<>();
+    private final static String QUEUE_NAME = "someQueue";
 
-    public static void main(String[] args) throws URISyntaxException, InterruptedException, ExecutionException {
-//        GradeerClient client = new GradeerClient(new URI("ws://localhost:8080/ws"));
-//        client.connect();
-//        while (!client.isOpen()) {
-//            Thread.sleep(100);
-//        }
-//        client.send("hello");
+    public static void main(String[] args) throws URISyntaxException, InterruptedException, ExecutionException, IOException, TimeoutException {
 
-//        List<Transport> transports = Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()));
-//        SockJsClient sockJsClient = new SockJsClient(transports);
-//        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
-        String url = "ws://localhost:8080/ws";
-//        StompSession session = stompClient.connectAsync(url, new StompSessionHandlerAdapter() {}).get();
-//        session.subscribe("/topic/paths", new StompSessionHandlerAdapter() {
-//            @Override
-//            public void handleFrame(StompHeaders headers, Object payload) {
-//                System.out.println("Received: " + payload);
-//            }
-//        });
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
-        WebSocketClient webSocketClient = new StandardWebSocketClient();
-        WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
-        stompClient.setMessageConverter(new StringMessageConverter());
-        StompSessionHandler sessionHandler = new GradeerStompSessionHandler();
-        stompClient.connect(url, sessionHandler);
-        StompSession session = stompClient.connectAsync(url, new StompSessionHandlerAdapter() {}).get();
-        session.subscribe("/topic/paths", new StompSessionHandlerAdapter() {
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                super.handleFrame(headers, payload);
-            }
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            System.out.println();
+            System.out.println(" [x] Received '" + message + "'");
+        };
+        channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {
         });
-
-//        session.send("/app/sendPath", "Your Path Here");
 
 //        // Read CLI
 //        CLIReader cliReader = new CLIReader(args);
