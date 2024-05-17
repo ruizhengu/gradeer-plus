@@ -1,5 +1,6 @@
 package tech.clegg.gradeer;
 
+import org.checkerframework.checker.units.qual.C;
 import tech.clegg.gradeer.api.MessageListener;
 import tech.clegg.gradeer.api.WorkerSubmission;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
@@ -33,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,10 @@ public class Gradeer {
     private Collection<Solution> studentSolutions = new ArrayList<>();
     private Collection<Solution> mutantSolutions = new ArrayList<>();
     private Collection<Check> checks = new ArrayList<>();
+    private static WorkerSubmission workerSubmission;
+    private static final CountDownLatch latch = new CountDownLatch(1);
+    private static String replyQueue;
+    private static String correlation;
 
     public static void main(String[] args) {
         // Read CLI
@@ -55,9 +61,9 @@ public class Gradeer {
         try {
             // Setup config
 
-            WorkerSubmission workerSubmission = new WorkerSubmission(new MessageListener() {
+            workerSubmission = new WorkerSubmission(new MessageListener() {
                 @Override
-                public void onMessageReceived(String message) {
+                public void onMessageReceived(String message, String replyTo, String correlationId) {
                     System.out.println("Main " + message);
                     Path configJSON = Paths.get(message, "FD", "gconfig-manual.json");
 
@@ -73,6 +79,17 @@ public class Gradeer {
 
                     // Start Gradeer
                     Gradeer gradeer = new Gradeer(config);
+
+                    replyQueue = replyTo;
+                    correlation = correlationId;
+                    latch.countDown();
+//
+                    try {
+                        latch.await();
+                        workerSubmission.sending(replyQueue, correlation);
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
             );
@@ -98,23 +115,6 @@ public class Gradeer {
             throw new RuntimeException(e);
         }
     }
-
-//    public void parseConfig(String path) {
-//        Path configJSON = Paths.get(path, "FD", "gconfig-manual.json");
-//
-//        if (Files.notExists(configJSON)) {
-//            System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
-//            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
-//        }
-//        Configuration config = new Configuration(configJSON);
-//
-//        // Add included / excluded solutions
-//        config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
-//        config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
-//
-//        // Start Gradeer
-//        Gradeer gradeer = new Gradeer(config);
-//    }
 
     public Gradeer(Configuration config) {
         configuration = config;
@@ -314,6 +314,8 @@ public class Gradeer {
 
         for (Solution s : studentSolutions) {
             System.out.println(s.getIdentifier());
+            // TODO return the student identifiers to the front end
+            workerSubmission.addIdentifier(s.getIdentifier());
             if (!s.isCompiled())
                 System.err.println("[SEVERE] Student solution '" + s.getIdentifier() + "' was not compiled.");
         }
