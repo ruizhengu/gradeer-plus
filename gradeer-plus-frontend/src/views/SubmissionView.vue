@@ -14,23 +14,25 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import {
-  fetchAllSubmissionByAssignment,
+  // fetchAllSubmissionByAssignment,
   loadSubmissionPath
 } from '@/api/submissions'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 
 const router = useRouter()
-const route = useRoute()
-const id = route.query.id
+// const route = useRoute()
+// const id = route.query.id
 
 const submissions = ref([])
 
-fetchAllSubmissionByAssignment(id).then(response => {
-  submissions.value = response
-})
+// TODO could store the loaded submissions to the database?
+// fetchAllSubmissionByAssignment(id).then(response => {
+//   submissions.value = response
+//   console.log(response)
+// })
 
-const perPage = ref(5)
+const perPage = ref(10)
 
 const currentPage = ref(0)
 
@@ -71,22 +73,6 @@ const back = () => {
   router.back()
 }
 
-// Select a local folder where the submissions are stroed
-
-// const folderInput = ref(null)
-// const selectFolder = () => {
-//   folderInput.value.click()
-// }
-
-// const handleFolderSelection = (event) => {
-//   const files = event.target.files
-//   if (files.length > 0) {
-//     Array.from(files).forEach(file => {
-//       console.log(file.webkitRelativePath); // Shows the path relative to the root of the selected directory
-//     });
-//   }
-// }
-
 const modalAddActive = ref(false)
 
 const submissionFolder = ref("")
@@ -94,9 +80,16 @@ const submissionFolder = ref("")
 const selectSubmissions = async () => {
   // Send the path to backend
   await loadSubmissionPath(submissionFolder).then(response => {
-    console.log(response)
+    const formattedResposne = response.map(element => {
+      return {
+        status: "Not Started",
+        student: element
+      }
+    })
+    submissions.value = formattedResposne
   })
   modalAddActive.value = false
+  submissionFolder.value = ""
 }
 
 </script>

@@ -1,5 +1,7 @@
 package tech.clegg.gradeer.api;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ public class WorkerSubmission {
     private Connection connection;
     private Channel channel;
     private MessageListener messageListener;
-    private List<String> identifiers;
+    private ArrayList<String> identifiers;
 
     public WorkerSubmission(MessageListener messageListener) throws IOException, TimeoutException {
         this.messageListener = messageListener;
@@ -45,14 +47,14 @@ public class WorkerSubmission {
     }
 
     public void sending(String replyTo, String correlationId) throws IOException {
-        System.out.println(identifiers.toString());
-        String message = identifiers.toString();
+        String message = new Gson().toJson(identifiers);
         AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
                 .correlationId(correlationId)
                 .build();
         channel.basicPublish("", replyTo, props, message.getBytes());
         System.out.println(" [x] Sent '" + message + "'");
-
+        // empty the identifiers list
+        identifiers = new ArrayList<>();
     }
 
     public void addIdentifier(String identifier) {
