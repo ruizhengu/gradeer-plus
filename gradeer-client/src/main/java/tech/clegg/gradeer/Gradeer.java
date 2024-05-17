@@ -1,5 +1,6 @@
 package tech.clegg.gradeer;
 
+import tech.clegg.gradeer.api.MessageListener;
 import tech.clegg.gradeer.api.WorkerSubmission;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
 import tech.clegg.gradeer.checks.Check;
@@ -53,25 +54,30 @@ public class Gradeer {
 
         try {
             // Setup config
-//            Path configJSON = Paths.get(cliReader.getInputValue(CLIOptions.CONFIGURATION_LOCATION));
 
-            Path configJSON = Paths.get("/Users/ruizhengu/GTA/COM1003/2022-2023/Gradeer_manualMarking_calibration_master/FD/gconfig-manual.json");
+            WorkerSubmission workerSubmission = new WorkerSubmission(new MessageListener() {
+                @Override
+                public void onMessageReceived(String message) {
+                    System.out.println("Main " + message);
+                    Path configJSON = Paths.get(message, "FD", "gconfig-manual.json");
 
-            if (Files.notExists(configJSON)) {
-                System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
-                System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+                    if (Files.notExists(configJSON)) {
+                        System.err.println("Config JSON file " + configJSON + " does not exist!");
+                        System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+                    }
+                    Configuration config = new Configuration(configJSON);
+
+                    // Add included / excluded solutions
+                    config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
+                    config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+
+                    // Start Gradeer
+                    Gradeer gradeer = new Gradeer(config);
+                }
             }
-            Configuration config = new Configuration(configJSON);
-
-            // Add included / excluded solutions
-            config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
-            config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
-
-            // Start Gradeer
-            Gradeer gradeer = new Gradeer(config);
-
-            WorkerSubmission workerSubmission = new WorkerSubmission();
+            );
             workerSubmission.receiving();
+
 
 //            gradeer.loadMutantSolutions(cliReader);
 //
@@ -92,6 +98,23 @@ public class Gradeer {
             throw new RuntimeException(e);
         }
     }
+
+//    public void parseConfig(String path) {
+//        Path configJSON = Paths.get(path, "FD", "gconfig-manual.json");
+//
+//        if (Files.notExists(configJSON)) {
+//            System.err.println("Config JSON file " + configJSON.toString() + " does not exist!");
+//            System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
+//        }
+//        Configuration config = new Configuration(configJSON);
+//
+//        // Add included / excluded solutions
+//        config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
+//        config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+//
+//        // Start Gradeer
+//        Gradeer gradeer = new Gradeer(config);
+//    }
 
     public Gradeer(Configuration config) {
         configuration = config;

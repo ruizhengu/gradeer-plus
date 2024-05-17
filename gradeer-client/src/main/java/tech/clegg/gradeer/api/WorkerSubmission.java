@@ -12,8 +12,10 @@ public class WorkerSubmission {
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
+    private MessageListener messageListener;
 
-    public WorkerSubmission() throws IOException, TimeoutException {
+    public WorkerSubmission(MessageListener messageListener) throws IOException, TimeoutException {
+        this.messageListener = messageListener;
         factory = new ConnectionFactory();
         factory.setHost("localhost");
         connection = factory.newConnection();
@@ -26,6 +28,9 @@ public class WorkerSubmission {
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             System.out.println(" [x] Received '" + message + "'");
+            if (messageListener != null) {
+                messageListener.onMessageReceived(message);
+            }
             AMQP.BasicProperties props = delivery.getProperties();
             String replyTo = props.getReplyTo();
             String correlationId = props.getCorrelationId();
