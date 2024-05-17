@@ -54,14 +54,24 @@ public class SubmissionController {
     @PostMapping("/loadPath")
     public ResponseEntity<String> loadSubmissionPath(@RequestBody String path) throws Exception {
         String decodedPath = URLDecoder.decode(path, StandardCharsets.UTF_8);
-//        System.out.println("submission controller " + decodedPath);
         MessageProperties props = new MessageProperties();
-        props.setReplyTo("return-submission");
+        props.setReplyTo("load-submission-receive");
         props.setCorrelationId(UUID.randomUUID().toString());
         Message message = new Message(decodedPath.getBytes(StandardCharsets.UTF_8), props);
-        Message response = rabbitTemplate.sendAndReceive("load_submission", message);
+        Message response = rabbitTemplate.sendAndReceive("load-submission-send", message);
         String responseText = new String(response.getBody(), StandardCharsets.UTF_8);
 //        System.out.println("Received response: " + responseText);
+        return ResponseEntity.ok(responseText);
+    }
+
+    @PostMapping("/mergedSolution")
+    public ResponseEntity<String> getMergedSolution(@RequestBody String student) throws Exception {
+        MessageProperties props = new MessageProperties();
+        props.setReplyTo("merged-solution-receive");
+        props.setCorrelationId(UUID.randomUUID().toString());
+        Message message = new Message(student.getBytes(StandardCharsets.UTF_8), props);
+        Message response = rabbitTemplate.sendAndReceive("merged-solution-send", message);
+        String responseText = new String(response.getBody(), StandardCharsets.UTF_8);
         return ResponseEntity.ok(responseText);
     }
 }

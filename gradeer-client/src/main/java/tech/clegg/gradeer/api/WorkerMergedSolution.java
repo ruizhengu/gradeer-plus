@@ -8,17 +8,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
-public class WorkerSubmission {
-    private final static String QUEUE_SEND = "load-submission-send";
-    private final static String QUEUE_RECEIVE = "load-submission-receive";
+public class WorkerMergedSolution {
+    private final static String QUEUE_SEND = "merged-solution-send";
+    private final static String QUEUE_RECEIVE = "merged-solution-receive";
 
     private ConnectionFactory factory;
     private Connection connection;
     private Channel channel;
     private MessageListener messageListener;
-    private ArrayList<String> identifiers;
 
-    public WorkerSubmission(MessageListener messageListener) throws IOException, TimeoutException {
+    public WorkerMergedSolution(MessageListener messageListener) throws IOException, TimeoutException {
         this.messageListener = messageListener;
         factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -26,7 +25,6 @@ public class WorkerSubmission {
         channel = connection.createChannel();
         channel.queueDeclare(QUEUE_SEND, false, false, false, null);
         channel.queueDeclare(QUEUE_RECEIVE, false, false, false, null);
-        identifiers = new ArrayList<>();
     }
 
     public void receiving() throws IOException {
@@ -39,23 +37,18 @@ public class WorkerSubmission {
             if (messageListener != null) {
                 messageListener.onMessageReceived(message, replyTo, correlationId);
             }
+            sending(replyTo, correlationId);
         };
         channel.basicConsume(QUEUE_SEND, true, deliverCallback, consumerTag -> {
         });
     }
 
     public void sending(String replyTo, String correlationId) throws IOException {
-        String message = new Gson().toJson(identifiers);
+        String message = "hello";
         AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
                 .correlationId(correlationId)
                 .build();
         channel.basicPublish("", replyTo, props, message.getBytes());
         System.out.println(" [x] Sent '" + message + "'");
-        // empty the identifiers list
-        identifiers = new ArrayList<>();
-    }
-
-    public void addIdentifier(String identifier) {
-        identifiers.add(identifier);
     }
 }

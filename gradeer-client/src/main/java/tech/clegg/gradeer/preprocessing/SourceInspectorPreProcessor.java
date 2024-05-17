@@ -68,7 +68,7 @@ public class SourceInspectorPreProcessor extends PreProcessor
                 toInspect.add(Paths.get(configuration.getSolutionCapturedOutputDir() + File.separator + solution.getIdentifier() + "-output.txt").toAbsolutePath());
 
             inspectionCommandProcess = new InspectionCommandProcess(configuration, toInspect);
-            inspectionCommandProcess.run();
+//            inspectionCommandProcess.run();
         }
 
         @Override

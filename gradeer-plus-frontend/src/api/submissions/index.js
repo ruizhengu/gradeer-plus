@@ -56,3 +56,15 @@ export const loadSubmissionPath = async (path) => {
     }
   }
 }
+
+export const getMergedSolution = async (student) => {
+  try {
+    return await axios.post('http://localhost:8080/submissions/mergedSolution', student).then(response => response.data)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}

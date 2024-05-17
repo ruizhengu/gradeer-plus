@@ -1,6 +1,5 @@
 package tech.clegg.gradeer;
 
-import org.checkerframework.checker.units.qual.C;
 import tech.clegg.gradeer.api.MessageListener;
 import tech.clegg.gradeer.api.WorkerSubmission;
 import tech.clegg.gradeer.auxiliaryprocesses.MergedSolutionWriter;
@@ -64,7 +63,6 @@ public class Gradeer {
             workerSubmission = new WorkerSubmission(new MessageListener() {
                 @Override
                 public void onMessageReceived(String message, String replyTo, String correlationId) {
-                    System.out.println("Main " + message);
                     Path configJSON = Paths.get(message, "FD", "gconfig-manual.json");
 
                     if (Files.notExists(configJSON)) {
@@ -90,28 +88,25 @@ public class Gradeer {
                     } catch (IOException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+
+                    gradeer.loadMutantSolutions(cliReader);
+
+                    ResultsGenerator resultsGenerator = gradeer.startEnvironment();
+                    resultsGenerator.run();
+
+                    System.out.println("Completed grading for config " + configJSON.getFileName());
+                    config.getTimer().end();
                 }
-            }
-            );
+            });
             workerSubmission.receiving();
 
 
-//            gradeer.loadMutantSolutions(cliReader);
-//
-//            ResultsGenerator resultsGenerator = gradeer.startEnvironment();
-//            resultsGenerator.run();
-//
-//            System.out.println("Completed grading for config " + configJSON.getFileName());
-//            config.getTimer().end();
-
         } catch (IllegalArgumentException e) {
             // No config file
-            e.printStackTrace();
             System.err.println("No configuration file defined, exiting... ");
             System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
         } catch (IOException | TimeoutException e) {
             // Message queue issue
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -144,6 +139,7 @@ public class Gradeer {
         }
 
         // If mutants are present, run checks on them and report any mutants that are not detected by any checks
+        // NOTE this part is not called
         if (!mutantSolutions.isEmpty()) {
             mutationAnalysis();
         }

@@ -97,8 +97,8 @@ public class CheckProcessor
 
         // Store checks that did not have restored CheckResults; i.e. are executed now
         Collection<Check> currentlyExecutedChecks = new ArrayList<>();
-
-        // Run individual Check groups, from highest priority to lowest
+//
+//        // Run individual Check groups, from highest priority to lowest
         List<Integer> priorityValues = new ArrayList<>(checkGroups.keySet());
         priorityValues.sort(Collections.reverseOrder());
         for (int p : priorityValues)
@@ -108,27 +108,27 @@ public class CheckProcessor
                     runCheckGroup(solution, pendingChecksInGroup)
             );
         }
+//
+//        // Stop PreProcessors
+//        preProcessors.forEach(PreProcessor::stop);
+//
+//        // Restart ManualChecks if selected & just executed
+//        if(checkTypeIsPresent(ManualCheck.class, currentlyExecutedChecks))
+//        {
+//            // Show results of manual checks
+//            TextTable tt = generateCheckResultsTable(
+//                    solution.getAllCheckResults()
+//                            .stream()
+//                            .filter(r -> r.getCheck().getClass().equals(ManualCheck.class))
+//                            .collect(Collectors.toList())
+//            );
+//            tt.printTable();
+//
+//            restartManualChecks(solution);
+//        }
 
-        // Stop PreProcessors
-        preProcessors.forEach(PreProcessor::stop);
-
-        // Restart ManualChecks if selected & just executed
-        if(checkTypeIsPresent(ManualCheck.class, currentlyExecutedChecks))
-        {
-            // Show results of manual checks
-            TextTable tt = generateCheckResultsTable(
-                    solution.getAllCheckResults()
-                            .stream()
-                            .filter(r -> r.getCheck().getClass().equals(ManualCheck.class))
-                            .collect(Collectors.toList())
-            );
-            tt.printTable();
-
-            restartManualChecks(solution);
-        }
-
-        executedSolutions.add(solution);
-        configuration.getTimer().split("Completed checks for Solution " + solution.getIdentifier());
+//        executedSolutions.add(solution);
+//        configuration.getTimer().split("Completed checks for Solution " + solution.getIdentifier());
     }
 
     private TextTable generateCheckResultsTable(Collection<CheckResult> checkResults)

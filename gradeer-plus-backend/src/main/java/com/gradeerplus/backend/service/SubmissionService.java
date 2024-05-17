@@ -10,4 +10,5 @@ public interface SubmissionService {
     String getCodeById(Integer id);
 
     String getAssignmentChecksById(Integer id);
+
 }

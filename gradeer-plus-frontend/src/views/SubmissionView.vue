@@ -65,8 +65,8 @@ const statusClass = (status) => {
   }
 }
 
-const enterMarkingView = (id) => {
-  router.push({ name: 'Marking', query: { id: id } })
+const enterMarkingView = (id, student) => {
+  router.push({ name: 'marking', query: { id: id, student: student } })
 }
 
 const back = () => {
@@ -141,7 +141,7 @@ const selectSubmissions = async () => {
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
                     <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking"
-                      @click="enterMarkingView(submission.id)" />
+                      @click="enterMarkingView(submission.id, submission.student)" />
                   </BaseButtons>
                 </td>
               </tr>

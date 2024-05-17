@@ -26,4 +26,5 @@ public class SubmissionServiceImpl implements SubmissionService {
     public String getAssignmentChecksById(Integer id) {
         return submissionRepository.getAssignmentChecksById(id);
     }
+
 }
