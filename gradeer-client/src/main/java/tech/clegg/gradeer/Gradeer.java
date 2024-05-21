@@ -81,7 +81,7 @@ public class Gradeer {
                     replyQueue = replyTo;
                     correlation = correlationId;
                     latch.countDown();
-//
+
                     try {
                         latch.await();
                         workerSubmission.sending(replyQueue, correlation);
@@ -139,7 +139,6 @@ public class Gradeer {
         }
 
         // If mutants are present, run checks on them and report any mutants that are not detected by any checks
-        // NOTE this part is not called
         if (!mutantSolutions.isEmpty()) {
             mutationAnalysis();
         }

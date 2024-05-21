@@ -1,6 +1,5 @@
 package tech.clegg.gradeer.results;
 
-import org.checkerframework.checker.units.qual.C;
 import tech.clegg.gradeer.api.MessageListener;
 import tech.clegg.gradeer.api.WorkerMergedSolution;
 import tech.clegg.gradeer.checks.Check;
@@ -48,12 +47,24 @@ public class ResultsGenerator implements Runnable {
         int solutionNumber = 1;
 
         CountDownLatch latch = new CountDownLatch(1);
-
         try {
             workerMergedSolution = new WorkerMergedSolution(new MessageListener() {
                 @Override
                 public void onMessageReceived(String message, String replyTo, String correlationId) {
                     latch.countDown();
+
+                    replyQueue = replyTo;
+                    correlation = correlationId;
+
+                    try {
+                        for (Solution s : studentSolutions) {
+                            if (Objects.equals(s.getIdentifier(), message)) {
+                                workerMergedSolution.sending("hello", replyTo, correlationId);
+                            }
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             workerMergedSolution.receiving();
@@ -65,8 +76,6 @@ public class ResultsGenerator implements Runnable {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println("if the wait works");
 
         // TODO do not use loop
 //        for (Solution s : studentSolutions) {
@@ -111,7 +120,7 @@ public class ResultsGenerator implements Runnable {
             checkProcessor.runChecks(solution);
         }
 
-        //TODO get the check results from the front end
+        // TODO get the check results from the front end
 
         // Store CheckResults of solution
         checkResultsStorage.storeCheckResults(solution);
