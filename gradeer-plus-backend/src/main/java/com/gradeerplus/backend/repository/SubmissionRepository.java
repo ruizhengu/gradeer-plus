@@ -20,4 +20,15 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 
     @Query(value = "SELECT a.check_data FROM assignments a JOIN submissions s ON a.id = s.assignment_id WHERE s.id = :id", nativeQuery = true)
     String getAssignmentChecksById(@Param("id") Integer id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "INSERT INTO submissions (student, assignment_id, grade, status, marker) VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
+    void storeSubmission(
+            @Param("student") String student,
+            @Param("assignment_id") Integer assignment_id,
+            @Param("grade") Integer grade,
+            @Param("status") String status,
+            @Param("marker") String marker
+    );
 }

@@ -43,11 +43,10 @@ public class WorkerMergedSolution {
     }
 
     public void sending(String message, String replyTo, String correlationId) throws IOException {
-//        String message = "hello";
         AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
                 .correlationId(correlationId)
                 .build();
         channel.basicPublish("", replyTo, props, message.getBytes());
-        System.out.println(" [x] Sent '" + message + "'");
+//        System.out.println(" [x] Sent '" + message + "'");
     }
 }

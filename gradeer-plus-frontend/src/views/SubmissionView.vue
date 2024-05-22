@@ -15,18 +15,20 @@ import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import {
   // fetchAllSubmissionByAssignment,
-  loadSubmissionPath
+  loadSubmissionPath,
+  storeSubmission
 } from '@/api/submissions'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 
 const router = useRouter()
-// const route = useRoute()
-// const id = route.query.id
+const route = useRoute()
+const id = route.query.id
 
 const submissions = ref([])
 
 // TODO could store the loaded submissions to the database?
+// TODO only fetch the data with the current marker
 // fetchAllSubmissionByAssignment(id).then(response => {
 //   submissions.value = response
 //   console.log(response)
@@ -39,6 +41,7 @@ const currentPage = ref(0)
 const submissionPaginated = computed(() =>
   submissions.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
 )
+
 
 const numPages = computed(() => Math.ceil(submissions.value.length / perPage.value))
 
@@ -77,6 +80,13 @@ const modalAddActive = ref(false)
 
 const submissionFolder = ref("")
 
+const saveSubmissions = async () => {
+  // TODO also save the marker data
+  await storeSubmission("apiTest", 0, parseInt(id), "Not Started", "ruizhen").then(response => {
+    console.log(response)
+  })
+}
+
 const selectSubmissions = async () => {
   // Send the path to backend
   await loadSubmissionPath(submissionFolder).then(response => {
@@ -88,6 +98,7 @@ const selectSubmissions = async () => {
     })
     submissions.value = formattedResposne
   })
+  saveSubmissions()
   modalAddActive.value = false
   submissionFolder.value = ""
 }
@@ -141,7 +152,7 @@ const selectSubmissions = async () => {
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
                     <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking"
-                      @click="enterMarkingView(submission.id, submission.student)" />
+                      @click="enterMarkingView(id, submission.student)" />
                   </BaseButtons>
                 </td>
               </tr>

@@ -6,11 +6,11 @@ import BaseButton from '@/components/BaseButton.vue'
 import 'highlight.js/lib/common';
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import { useRouter, useRoute } from 'vue-router'
-import { getMergedSolution } from '@/api/submissions'
+import { getMergedSolution, getAssignmentChecksById } from '@/api/submissions'
 
 const router = useRouter()
 const route = useRoute()
-// const id = route.query.id
+const id = route.query.id
 const student = route.query.student
 
 const highlightjs = hljsVuePlugin.component
@@ -19,7 +19,7 @@ const code = ref("")
 
 const loadMergedSolution = async (student) => {
   await getMergedSolution(student).then(response => {
-    console.log(response)
+    // console.log(response)
     code.value = response
   })
 }
@@ -30,37 +30,37 @@ loadMergedSolution(student)
 //   code.value = response
 // })
 
-// const initalForm = {
-//   type: '',
-//   name: '',
-//   prompt: '',
-//   weight: 1,
-//   maxRange: 10,
-//   feedbackValues: [
-//     { 'score': 1.0, 'feedback': '' },
-//     { 'score': 0.8, 'feedback': '' },
-//     { 'score': 0.5, 'feedback': '' },
-//     { 'score': 0.0, 'feedback': '' }
-//   ],
-//   arbitraryFeedback: 'False',
-//   priority: 0,
-//   checkGroup: ''
-// }
+const initalForm = {
+  type: '',
+  name: '',
+  prompt: '',
+  weight: 1,
+  maxRange: 10,
+  feedbackValues: [
+    { 'score': 1.0, 'feedback': '' },
+    { 'score': 0.8, 'feedback': '' },
+    { 'score': 0.5, 'feedback': '' },
+    { 'score': 0.0, 'feedback': '' }
+  ],
+  arbitraryFeedback: 'False',
+  priority: 0,
+  checkGroup: ''
+}
 
 const checks = ref([])
 const marks = ref([])
 
-// getAssignmentChecksById(id).then(response => {
-//   if (response.length != 0) {
-//     checks.value = response
-//     for (var i = 0; i < checks.value.length; i++) {
-//       marks.value.push(Number(5).toFixed(1))
-//     }
-//   } else {
-//     checks.value = [initalForm]
-//     marks.value = [5]
-//   }
-// })
+getAssignmentChecksById(id).then(response => {
+  if (response.length != 0) {
+    checks.value = response
+    for (var i = 0; i < checks.value.length; i++) {
+      marks.value.push(Number(5).toFixed(1))
+    }
+  } else {
+    checks.value = [initalForm]
+    marks.value = [5]
+  }
+})
 
 const updateMark = (index) => {
   marks.value[index] = Number(marks.value[index]).toFixed(1)

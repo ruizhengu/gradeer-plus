@@ -59,17 +59,15 @@ public class ResultsGenerator implements Runnable {
 
                     replyQueue = replyTo;
                     correlation = correlationId;
-
                     try {
                         for (Solution s : studentSolutions) {
                             if (Objects.equals(s.getIdentifier(), message)) {
 
                                 Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
                                 String content = new String(Files.readAllBytes(mergedSolution));
-//                                System.out.println(content);
 
                                 workerMergedSolution.sending(content, replyTo, correlationId);
-                                processSolution(s);
+//                                processSolution(s);
                             }
                         }
                     } catch (IOException e) {

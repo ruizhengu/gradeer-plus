@@ -1,5 +1,6 @@
 package com.gradeerplus.backend.controller;
 
+import com.gradeerplus.backend.entity.Assignment;
 import com.gradeerplus.backend.entity.Submission;
 import com.gradeerplus.backend.service.impl.SubmissionServiceImpl;
 import com.rabbitmq.client.DeliverCallback;
@@ -73,5 +74,16 @@ public class SubmissionController {
         Message response = rabbitTemplate.sendAndReceive("merged-solution-send", message);
         String responseText = new String(response.getBody(), StandardCharsets.UTF_8);
         return ResponseEntity.ok(responseText);
+    }
+
+    @PostMapping("/save")
+    public void saveSubmission(
+            @RequestParam String student,
+            @RequestParam Integer assignment_id,
+            @RequestParam Integer grade,
+            @RequestParam String status,
+            @RequestParam String marker
+    ) throws Exception {
+        submissionServiceImpl.storeSubmission(student, assignment_id, grade, status, marker);
     }
 }

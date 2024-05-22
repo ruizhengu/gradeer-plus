@@ -13,15 +13,18 @@ public class Submission {
     private Integer id;
 
     private String student;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "assignment_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
+
     private Integer grade;
 
     private String status;
-    private String code;
+
+    private String marker;
 
     public Integer getId() {
         return id;
@@ -47,12 +50,12 @@ public class Submission {
         this.assignment = assignment;
     }
 
-    public void setGrade(Integer grade) {
-        this.grade = grade;
-    }
-
     public Integer getGrade() {
         return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
     public String getStatus() {
@@ -63,11 +66,11 @@ public class Submission {
         this.status = status;
     }
 
-    public String getCode() {
-        return code;
+    public String getMarker() {
+        return marker;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setMarker(String marker) {
+        this.marker = marker;
     }
 }

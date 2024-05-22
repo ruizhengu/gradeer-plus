@@ -68,3 +68,15 @@ export const getMergedSolution = async (student) => {
     }
   }
 }
+
+export const storeSubmission = async (student, grade, assignment_id, status, marker) => {
+  try {
+    return await axios.post(`http://localhost:8080/submissions/save?student=${student}&grade=${grade}&assignment_id=${assignment_id}&status=${status}&marker=${marker}`).then(response => response.data)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}

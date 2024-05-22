@@ -1,5 +1,6 @@
 package com.gradeerplus.backend.service;
 
+import com.gradeerplus.backend.entity.Assignment;
 import com.gradeerplus.backend.entity.Submission;
 
 import java.util.List;
@@ -11,4 +12,11 @@ public interface SubmissionService {
 
     String getAssignmentChecksById(Integer id);
 
+    void storeSubmission(
+            String student,
+            Integer assignment_id,
+            Integer grade,
+            String status,
+            String marker
+    );
 }
