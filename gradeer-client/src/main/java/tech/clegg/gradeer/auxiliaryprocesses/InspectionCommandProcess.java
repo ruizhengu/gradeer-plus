@@ -25,6 +25,7 @@ public class InspectionCommandProcess implements Runnable
     public void run()
     {
         List<String> command = new ArrayList<>();
+        System.out.println("code command called");
 
         // Do nothing if no inspection command
         if(configuration.getInspectionCommand() == null)

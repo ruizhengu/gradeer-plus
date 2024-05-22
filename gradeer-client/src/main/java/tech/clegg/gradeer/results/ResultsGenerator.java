@@ -5,12 +5,15 @@ import tech.clegg.gradeer.api.WorkerMergedSolution;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.checkprocessing.CheckProcessor;
 import tech.clegg.gradeer.configuration.Configuration;
+import tech.clegg.gradeer.preprocessing.SourceInspectorPreProcessor;
 import tech.clegg.gradeer.results.io.CSVWriter;
 import tech.clegg.gradeer.results.io.DelayedFileWriter;
 import tech.clegg.gradeer.solution.Solution;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +27,7 @@ public class ResultsGenerator implements Runnable {
     private WorkerMergedSolution workerMergedSolution;
     private static String replyQueue;
     private static String correlation;
+    private SourceInspectorPreProcessor sourceInspectorPreProcessor;
 
     public ResultsGenerator(Collection<Solution> studentSolutions, List<CheckProcessor> checkProcessors, Configuration configuration) {
         this.studentSolutions = studentSolutions;
@@ -59,7 +63,13 @@ public class ResultsGenerator implements Runnable {
                     try {
                         for (Solution s : studentSolutions) {
                             if (Objects.equals(s.getIdentifier(), message)) {
-                                workerMergedSolution.sending("hello", replyTo, correlationId);
+
+                                Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
+                                String content = new String(Files.readAllBytes(mergedSolution));
+//                                System.out.println(content);
+
+                                workerMergedSolution.sending(content, replyTo, correlationId);
+                                processSolution(s);
                             }
                         }
                     } catch (IOException e) {
@@ -68,7 +78,6 @@ public class ResultsGenerator implements Runnable {
                 }
             });
             workerMergedSolution.receiving();
-
             latch.await();
 
         } catch (IOException | TimeoutException e) {

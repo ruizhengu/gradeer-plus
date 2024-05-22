@@ -5,16 +5,15 @@ import tech.clegg.gradeer.checks.exceptions.InvalidCheckException;
 import tech.clegg.gradeer.configuration.Configuration;
 import tech.clegg.gradeer.execution.testing.UnitTest;
 import tech.clegg.gradeer.execution.testing.junit.JUnitTestSource;
+import tech.clegg.gradeer.preprocessing.JavaBatchExecutorPreProcessor;
 import tech.clegg.gradeer.preprocessing.PreProcessor;
+import tech.clegg.gradeer.preprocessing.SourceInspectorPreProcessor;
 import tech.clegg.gradeer.preprocessing.testing.UnitTestPreProcessor;
 import tech.clegg.gradeer.preprocessing.testing.UnitTestPreProcessorResults;
 import tech.clegg.gradeer.preprocessing.testing.UnitTestResult;
 import tech.clegg.gradeer.solution.Solution;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 public class UnitTestCheck extends Check
 {
@@ -121,7 +120,11 @@ public class UnitTestCheck extends Check
     @Override
     public Collection<Class<? extends PreProcessor>> getPreProcessorTypes()
     {
-        return Collections.singleton(PREPROCESSOR_CLASS);
+        Collection<Class<? extends PreProcessor>> preProcessorTypes = new HashSet<>();
+
+        preProcessorTypes.add(UnitTestPreProcessor.class);
+//        preProcessorTypes.add(SourceInspectorPreProcessor.class);
+        return preProcessorTypes;
     }
 
     public UnitTest getUnitTest()

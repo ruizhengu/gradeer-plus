@@ -15,15 +15,17 @@ const student = route.query.student
 
 const highlightjs = hljsVuePlugin.component
 
+const code = ref("")
+
 const loadMergedSolution = async (student) => {
   await getMergedSolution(student).then(response => {
     console.log(response)
+    code.value = response
   })
 }
 
 loadMergedSolution(student)
 
-const code = ref("")
 // getCodeById(id).then(response => {
 //   code.value = response
 // })

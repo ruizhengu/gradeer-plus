@@ -97,20 +97,21 @@ public class CheckProcessor
 
         // Store checks that did not have restored CheckResults; i.e. are executed now
         Collection<Check> currentlyExecutedChecks = new ArrayList<>();
-//
-//        // Run individual Check groups, from highest priority to lowest
+
+        // Run individual Check groups, from highest priority to lowest
         List<Integer> priorityValues = new ArrayList<>(checkGroups.keySet());
         priorityValues.sort(Collections.reverseOrder());
         for (int p : priorityValues)
         {
+            System.out.println("check group member" + checkGroups.get(p));
             Collection<Check> pendingChecksInGroup = pendingChecks(solution, checkGroups.get(p));
             currentlyExecutedChecks.addAll(
                     runCheckGroup(solution, pendingChecksInGroup)
             );
         }
-//
-//        // Stop PreProcessors
-//        preProcessors.forEach(PreProcessor::stop);
+
+        // Stop PreProcessors
+        preProcessors.forEach(PreProcessor::stop);
 //
 //        // Restart ManualChecks if selected & just executed
 //        if(checkTypeIsPresent(ManualCheck.class, currentlyExecutedChecks))
