@@ -12,8 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Integer>, JpaSpecificationExecutor<Submission> {
+
     @Query(value = "SELECT * FROM submissions WHERE assignment_id = :assignment_id", nativeQuery = true)
     List<Submission> fetchAllSubmissionByAssignment(@Param("assignment_id") Integer assignment_id);
+
+    @Query(value = "SELECT * FROM submissions WHERE assignment_id = :assignment_id AND marker = :marker", nativeQuery = true)
+    List<Submission> fetchSubmissionWithAssignmentAndMarker(@Param("assignment_id") Integer assignment_id, @Param("marker") String marker);
 
     @Query(value = "SELECT code from submissions WHERE id = :id", nativeQuery = true)
     String getCodeById(@Param("id") Integer id);

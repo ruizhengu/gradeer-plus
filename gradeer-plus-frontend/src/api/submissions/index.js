@@ -15,6 +15,22 @@ export const fetchAllSubmissionByAssignment = async (id) => {
   }
 }
 
+export const fetchSubmissionWithAssignmentAndMarker = async (id, marker) => {
+  try {
+    const params = {
+      assignment_id: id,
+      marker: marker
+    }
+    return await axios.get('http://localhost:8080/submissions/assignmentAndMarker', { params }).then(response => response.data)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}
+
 export const getCodeById = async (id) => {
   try {
     const params = {
@@ -69,7 +85,7 @@ export const getMergedSolution = async (student) => {
   }
 }
 
-export const storeSubmission = async (student, grade, assignment_id, status, marker) => {
+export const storeSubmission = async (student, assignment_id, grade, status, marker) => {
   try {
     return await axios.post(`http://localhost:8080/submissions/save?student=${student}&grade=${grade}&assignment_id=${assignment_id}&status=${status}&marker=${marker}`).then(response => response.data)
   } catch (error) {

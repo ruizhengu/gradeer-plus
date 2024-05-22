@@ -1,8 +1,6 @@
 package com.gradeerplus.backend.service.impl;
 
-import com.gradeerplus.backend.entity.Assignment;
 import com.gradeerplus.backend.entity.Submission;
-import com.gradeerplus.backend.repository.AssignmentRepository;
 import com.gradeerplus.backend.repository.SubmissionRepository;
 import com.gradeerplus.backend.service.SubmissionService;
 import jakarta.annotation.Resource;
@@ -15,11 +13,13 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Resource
     private SubmissionRepository submissionRepository;
 
-    @Resource
-    private AssignmentRepository assignmentRepository;
-
     public List<Submission> fetchAllSubmissionByAssignment(Integer assignment_id) {
         return submissionRepository.fetchAllSubmissionByAssignment(assignment_id);
+    }
+
+    @Override
+    public List<Submission> fetchSubmissionWithAssignmentAndMarker(Integer assignment_id, String marker) {
+        return submissionRepository.fetchSubmissionWithAssignmentAndMarker(assignment_id, marker);
     }
 
     @Override

@@ -16,8 +16,8 @@ public class Submission {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "assignment_id", nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
 
     private Integer grade;

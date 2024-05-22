@@ -42,7 +42,13 @@ public class SubmissionController {
         return submissionServiceImpl.fetchAllSubmissionByAssignment(assignment_id);
     }
 
+    @GetMapping("/assignmentAndMarker")
+    public List<Submission> getSubmissionWithAssignmentAndMarker(@RequestParam int assignment_id, @RequestParam String marker) throws Exception {
+        return submissionServiceImpl.fetchSubmissionWithAssignmentAndMarker(assignment_id, marker);
+    }
+
     @GetMapping("/code")
+
     public String getCodeById(@RequestParam int id) throws Exception {
         return submissionServiceImpl.getCodeById(id);
     }
@@ -61,7 +67,6 @@ public class SubmissionController {
         Message message = new Message(decodedPath.getBytes(StandardCharsets.UTF_8), props);
         Message response = rabbitTemplate.sendAndReceive("load-submission-send", message);
         String responseText = new String(response.getBody(), StandardCharsets.UTF_8);
-//        System.out.println("Received response: " + responseText);
         return ResponseEntity.ok(responseText);
     }
 

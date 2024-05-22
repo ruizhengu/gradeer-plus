@@ -14,7 +14,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { computed, ref } from 'vue'
 import {
-  // fetchAllSubmissionByAssignment,
+  fetchSubmissionWithAssignmentAndMarker,
   loadSubmissionPath,
   storeSubmission
 } from '@/api/submissions'
@@ -27,12 +27,12 @@ const id = route.query.id
 
 const submissions = ref([])
 
-// TODO could store the loaded submissions to the database?
-// TODO only fetch the data with the current marker
-// fetchAllSubmissionByAssignment(id).then(response => {
-//   submissions.value = response
-//   console.log(response)
-// })
+// TODO load current user as the marker 
+const marker = "Ruizhen"
+
+fetchSubmissionWithAssignmentAndMarker(id, marker).then(response => {
+  submissions.value = response
+})
 
 const perPage = ref(10)
 
@@ -41,7 +41,6 @@ const currentPage = ref(0)
 const submissionPaginated = computed(() =>
   submissions.value.slice(perPage.value * currentPage.value, perPage.value * (currentPage.value + 1))
 )
-
 
 const numPages = computed(() => Math.ceil(submissions.value.length / perPage.value))
 
@@ -80,11 +79,8 @@ const modalAddActive = ref(false)
 
 const submissionFolder = ref("")
 
-const saveSubmissions = async () => {
-  // TODO also save the marker data
-  await storeSubmission("apiTest", 0, parseInt(id), "Not Started", "ruizhen").then(response => {
-    console.log(response)
-  })
+const saveSubmissions = async (student, assignment_id, grade, status, marker) => {
+  await storeSubmission(student, assignment_id, grade, status, marker)
 }
 
 const selectSubmissions = async () => {
@@ -92,13 +88,18 @@ const selectSubmissions = async () => {
   await loadSubmissionPath(submissionFolder).then(response => {
     const formattedResposne = response.map(element => {
       return {
+        student: element,
+        assignment_id: parseInt(id),
+        grade: 0,
         status: "Not Started",
-        student: element
+        marker: marker
       }
     })
     submissions.value = formattedResposne
+    formattedResposne.forEach(submission => {
+      saveSubmissions(submission.student, submission.assignment_id, submission.grade, submission.status, submission.marker)
+    })
   })
-  saveSubmissions()
   modalAddActive.value = false
   submissionFolder.value = ""
 }
@@ -111,7 +112,6 @@ const selectSubmissions = async () => {
       <SectionTitle :icon="mdiBookAccountOutline" title="Submissions" main>
         <BaseButton target="_blank" :icon="mdiSelect" label="Load Submissions" color="contrast" rounded-full small
           @click="modalAddActive = true" />
-        <!-- <input ref="folderInput" webkitdirectory type="file" class="hidden" @change="handleFolderSelection" /> -->
       </SectionTitle>
 
       <CardBoxModal v-model="modalAddActive" title="Enter Path" button="info" has-cancel button-label="Load"
