@@ -56,10 +56,9 @@ public class ResultsGenerator implements Runnable {
                 try {
                     for (Solution s : studentSolutions) {
                         if (Objects.equals(s.getIdentifier(), message)) {
-
                             Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
                             String content = new String(Files.readAllBytes(mergedSolution));
-
+                            processSolution(s);
                             workerMergedSolution.sending(content, replyTo, correlationId);
                         }
                     }
@@ -119,8 +118,8 @@ public class ResultsGenerator implements Runnable {
         CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
 
         // Attempt load of stored CheckResults for solution; allow for skipping
-        if (configuration.isCheckResultRecoveryEnabled())
-            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
+//        if (configuration.isCheckResultRecoveryEnabled())
+//            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
 
         // Run Checks for solution
         for (CheckProcessor checkProcessor : checkProcessors) {

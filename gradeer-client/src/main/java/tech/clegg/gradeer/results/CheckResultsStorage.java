@@ -3,6 +3,7 @@ package tech.clegg.gradeer.results;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
+import org.apache.logging.log4j.core.net.ssl.SslConfiguration;
 import tech.clegg.gradeer.checks.ManualCheck;
 import tech.clegg.gradeer.checks.checkresults.CheckResult;
 import tech.clegg.gradeer.checks.Check;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CheckResultsStorage {
@@ -101,9 +103,45 @@ public class CheckResultsStorage {
     public void storeCheckResults(String checkResults) {
         JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
         System.out.println(checkResultsJson);
-        for (JsonElement checkResult : checkResultsJson) {
-            System.out.println(checkResult);
+        for (JsonElement element : checkResultsJson) {
+            JsonObject checkResult = element.getAsJsonObject();
+            String checkIdentifier = checkResult.get("type").getAsString() + "_" + checkResult.get("name").getAsString();
+
+            double unweightedScore = getUnweightedScore(checkResult);
+            String feedback = getFeedback(unweightedScore, checkResult);
+            System.out.println(checkIdentifier + " " + unweightedScore + " " + feedback);
         }
+    }
+
+    public double getUnweightedScore(JsonObject checkResult) {
+        // TODO does not cover binary options (could modify the option in the frontend e.g., slide to ratio button)
+        double unweightedScore = 1.0;
+        int result = checkResult.get("result").getAsInt();
+        double weight = checkResult.get("weight").getAsDouble();
+        int maxRange = checkResult.get("maxRange").getAsInt();
+
+        if (weight > 0) {
+            unweightedScore = (double) result / maxRange;
+            if (maxRange != 10) {
+                unweightedScore = ((double) result * maxRange / 10) / maxRange;
+            }
+        }
+        return unweightedScore;
+    }
+
+    public String getFeedback(double unweightedScore, JsonObject checkResult) {
+        JsonArray feedbackValues = checkResult.get("feedbackValues").getAsJsonArray();
+        String feedback = "";
+        double bestScore = -1;
+        for (JsonElement element : feedbackValues) {
+            JsonObject feedbackObject = element.getAsJsonObject();
+            double score = feedbackObject.get("score").getAsDouble();
+            if (score <= unweightedScore && score > bestScore) {
+                bestScore = score;
+                feedback = feedbackObject.get("feedback").getAsString();
+            }
+        }
+        return feedback;
     }
 
     /**
