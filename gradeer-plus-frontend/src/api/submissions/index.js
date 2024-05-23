@@ -96,3 +96,15 @@ export const storeSubmission = async (student, assignment_id, grade, status, mar
     }
   }
 }
+
+export const storeCheckResults = async (results) => {
+  try {
+    return await axios.post('http://localhost:8080/submissions/storeCheckResults', results).then(response => response.data)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}

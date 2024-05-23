@@ -103,7 +103,6 @@ public class CheckProcessor
         priorityValues.sort(Collections.reverseOrder());
         for (int p : priorityValues)
         {
-            System.out.println("check group member" + checkGroups.get(p));
             Collection<Check> pendingChecksInGroup = pendingChecks(solution, checkGroups.get(p));
             currentlyExecutedChecks.addAll(
                     runCheckGroup(solution, pendingChecksInGroup)
@@ -128,7 +127,7 @@ public class CheckProcessor
 //            restartManualChecks(solution);
 //        }
 
-//        executedSolutions.add(solution);
+        executedSolutions.add(solution);
 //        configuration.getTimer().split("Completed checks for Solution " + solution.getIdentifier());
     }
 

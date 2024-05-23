@@ -1,6 +1,7 @@
 package tech.clegg.gradeer.results;
 
 import tech.clegg.gradeer.api.MessageListener;
+import tech.clegg.gradeer.api.WorkerCheckResults;
 import tech.clegg.gradeer.api.WorkerMergedSolution;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.checkprocessing.CheckProcessor;
@@ -25,9 +26,7 @@ public class ResultsGenerator implements Runnable {
     protected List<CheckProcessor> checkProcessors;
     private Configuration configuration;
     private WorkerMergedSolution workerMergedSolution;
-    private static String replyQueue;
-    private static String correlation;
-    private SourceInspectorPreProcessor sourceInspectorPreProcessor;
+    private WorkerCheckResults workerCheckResults;
 
     public ResultsGenerator(Collection<Solution> studentSolutions, List<CheckProcessor> checkProcessors, Configuration configuration) {
         this.studentSolutions = studentSolutions;
@@ -50,37 +49,39 @@ public class ResultsGenerator implements Runnable {
         configuration.getTimer().split("Completed initialisation stage.");
         int solutionNumber = 1;
 
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latchMergedSolution = new CountDownLatch(1);
         try {
-            workerMergedSolution = new WorkerMergedSolution(new MessageListener() {
-                @Override
-                public void onMessageReceived(String message, String replyTo, String correlationId) {
-                    latch.countDown();
+            workerMergedSolution = new WorkerMergedSolution((message, replyTo, correlationId) -> {
+                latchMergedSolution.countDown();
+                try {
+                    for (Solution s : studentSolutions) {
+                        if (Objects.equals(s.getIdentifier(), message)) {
 
-                    replyQueue = replyTo;
-                    correlation = correlationId;
-                    try {
-                        for (Solution s : studentSolutions) {
-                            if (Objects.equals(s.getIdentifier(), message)) {
+                            Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
+                            String content = new String(Files.readAllBytes(mergedSolution));
 
-                                Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
-                                String content = new String(Files.readAllBytes(mergedSolution));
-
-                                workerMergedSolution.sending(content, replyTo, correlationId);
-//                                processSolution(s);
-                            }
+                            workerMergedSolution.sending(content, replyTo, correlationId);
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
                     }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             });
             workerMergedSolution.receiving();
-            latch.await();
-
-        } catch (IOException | TimeoutException e) {
+            latchMergedSolution.await();
+        } catch (IOException | TimeoutException | InterruptedException e) {
             throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        }
+
+        CountDownLatch latchStoreCheckResults = new CountDownLatch(1);
+        try {
+            workerCheckResults = new WorkerCheckResults((message, replyTo, correlationId) -> {
+                latchStoreCheckResults.countDown();
+                System.out.println(message);
+            });
+            workerCheckResults.receiving();
+            latchStoreCheckResults.await();
+        } catch (IOException | TimeoutException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
@@ -118,8 +119,8 @@ public class ResultsGenerator implements Runnable {
         CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
 
         // Attempt load of stored CheckResults for solution; allow for skipping
-        if (configuration.isCheckResultRecoveryEnabled())
-            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
+//        if (configuration.isCheckResultRecoveryEnabled())
+//            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
 
         // Run Checks for solution
         for (CheckProcessor checkProcessor : checkProcessors) {

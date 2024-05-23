@@ -12,17 +12,15 @@ public class WorkerSubmission {
     private final static String QUEUE_SEND = "load-submission-send";
     private final static String QUEUE_RECEIVE = "load-submission-receive";
 
-    private ConnectionFactory factory;
-    private Connection connection;
-    private Channel channel;
-    private MessageListener messageListener;
+    private final Channel channel;
+    private final MessageListener messageListener;
     private ArrayList<String> identifiers;
 
     public WorkerSubmission(MessageListener messageListener) throws IOException, TimeoutException {
         this.messageListener = messageListener;
-        factory = new ConnectionFactory();
+        ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        connection = factory.newConnection();
+        Connection connection = factory.newConnection();
         channel = connection.createChannel();
         channel.queueDeclare(QUEUE_SEND, false, false, false, null);
         channel.queueDeclare(QUEUE_RECEIVE, false, false, false, null);

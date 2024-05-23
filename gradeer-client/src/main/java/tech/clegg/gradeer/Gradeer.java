@@ -45,11 +45,10 @@ public class Gradeer {
     private Collection<Solution> mutantSolutions = new ArrayList<>();
     private Collection<Check> checks = new ArrayList<>();
     private static WorkerSubmission workerSubmission;
-    private static final CountDownLatch latch = new CountDownLatch(1);
-    private static String replyQueue;
-    private static String correlation;
 
     public static void main(String[] args) {
+        CountDownLatch latch = new CountDownLatch(1);
+
         // Read CLI
         CLIReader cliReader = new CLIReader(args);
         if (cliReader.hasOption(CLIOptions.HELP)) {
@@ -59,47 +58,40 @@ public class Gradeer {
 
         try {
             // Setup config
+            workerSubmission = new WorkerSubmission((message, replyTo, correlationId) -> {
+                Path configJSON = Paths.get(message, "FD", "gconfig-manual.json");
 
-            workerSubmission = new WorkerSubmission(new MessageListener() {
-                @Override
-                public void onMessageReceived(String message, String replyTo, String correlationId) {
-                    Path configJSON = Paths.get(message, "FD", "gconfig-manual.json");
-
-                    if (Files.notExists(configJSON)) {
-                        System.err.println("Config JSON file " + configJSON + " does not exist!");
-                        System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
-                    }
-                    Configuration config = new Configuration(configJSON);
-
-                    // Add included / excluded solutions
-                    config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
-                    config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
-
-                    // Start Gradeer
-                    Gradeer gradeer = new Gradeer(config);
-
-                    replyQueue = replyTo;
-                    correlation = correlationId;
-                    latch.countDown();
-
-                    try {
-                        latch.await();
-                        workerSubmission.sending(replyQueue, correlation);
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    gradeer.loadMutantSolutions(cliReader);
-
-                    ResultsGenerator resultsGenerator = gradeer.startEnvironment();
-                    resultsGenerator.run();
-
-                    System.out.println("Completed grading for config " + configJSON.getFileName());
-                    config.getTimer().end();
+                if (Files.notExists(configJSON)) {
+                    System.err.println("Config JSON file " + configJSON + " does not exist!");
+                    System.exit(ErrorCode.NO_CONFIG_FILE.getCode());
                 }
+                Configuration config = new Configuration(configJSON);
+
+                // Add included / excluded solutions
+                config.getIncludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.INCLUDE_SOLUTIONS));
+                config.getExcludeSolutions().addAll(cliReader.getArrayInputOrEmpty(CLIOptions.EXCLUDE_SOLUTIONS));
+
+                // Start Gradeer
+                Gradeer gradeer = new Gradeer(config);
+
+                latch.countDown();
+
+                try {
+                    latch.await();
+                    workerSubmission.sending(replyTo, correlationId);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                gradeer.loadMutantSolutions(cliReader);
+
+                ResultsGenerator resultsGenerator = gradeer.startEnvironment();
+                resultsGenerator.run();
+
+                System.out.println("Completed grading for config " + configJSON.getFileName());
+                config.getTimer().end();
             });
             workerSubmission.receiving();
-
 
         } catch (IllegalArgumentException e) {
             // No config file

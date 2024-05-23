@@ -6,7 +6,11 @@ import BaseButton from '@/components/BaseButton.vue'
 import 'highlight.js/lib/common';
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import { useRouter, useRoute } from 'vue-router'
-import { getMergedSolution, getAssignmentChecksById } from '@/api/submissions'
+import {
+  getMergedSolution,
+  getAssignmentChecksById,
+  storeCheckResults
+} from '@/api/submissions'
 
 const router = useRouter()
 const route = useRoute()
@@ -67,6 +71,13 @@ const updateMark = (index) => {
   console.log(marks)
 }
 
+const submit = async () => {
+  console.log(marks.value)
+  await storeCheckResults(marks.value).then(response => {
+    console.log(response)
+  })
+}
+
 const back = () => {
   router.back()
 }
@@ -91,8 +102,7 @@ const back = () => {
         </div>
         <div class="flex justify-between mt-5">
           <BaseButtons class="mt-5">
-            <BaseButton type="submit" color="info" label="Submit" />
-            <BaseButton color="info" outline label="Reset" />
+            <BaseButton color="info" label="Submit" @click="submit" />
           </BaseButtons>
           <BaseButton class="mt-5" color="info" label="Back" @click="back" />
         </div>

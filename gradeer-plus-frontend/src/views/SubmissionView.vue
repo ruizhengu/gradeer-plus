@@ -96,9 +96,9 @@ const selectSubmissions = async () => {
       }
     })
     submissions.value = formattedResposne
-    formattedResposne.forEach(submission => {
-      saveSubmissions(submission.student, submission.assignment_id, submission.grade, submission.status, submission.marker)
-    })
+    // formattedResposne.forEach(submission => {
+    //   saveSubmissions(submission.student, submission.assignment_id, submission.grade, submission.status, submission.marker)
+    // })
   })
   modalAddActive.value = false
   submissionFolder.value = ""
