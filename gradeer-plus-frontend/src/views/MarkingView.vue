@@ -52,28 +52,27 @@ const initalForm = {
 }
 
 const checks = ref([])
-const marks = ref([])
 
 getAssignmentChecksById(id).then(response => {
   if (response.length != 0) {
     checks.value = response
-    for (var i = 0; i < checks.value.length; i++) {
-      marks.value.push(Number(5).toFixed(1))
-    }
+    checks.value.forEach(check => {
+      check.result = parseFloat(Number(5).toFixed(1))
+    })
+    console.log(checks.value)
   } else {
     checks.value = [initalForm]
-    marks.value = [5]
   }
 })
 
 const updateMark = (index) => {
-  marks.value[index] = Number(marks.value[index]).toFixed(1)
-  console.log(marks)
+  checks.value[index].result = parseFloat(Number(checks.value[index].result).toFixed(1))
+  // console.log(checks.value[index])
 }
 
 const submit = async () => {
-  console.log(marks.value)
-  await storeCheckResults(marks.value).then(response => {
+  console.log(checks.value)
+  await storeCheckResults(checks.value).then(response => {
     console.log(response)
   })
 }
@@ -94,10 +93,10 @@ const back = () => {
           </div>
           <div>
             <label for="mark-slider" class="block text-lg font-medium text-gray-700">Mark</label>
-            <input id="mark-slider" v-model="marks[index]" type="range"
+            <input id="mark-slider" v-model="checks[index].result" type="range"
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="10" step="0.5"
               @input="updateMark(index)">
-            <div class="text-right text-lg">{{ marks[index] }}/10</div>
+            <div class="text-right text-lg">{{ checks[index].result }}/10</div>
           </div>
         </div>
         <div class="flex justify-between mt-5">

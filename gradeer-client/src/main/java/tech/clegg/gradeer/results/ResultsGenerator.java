@@ -77,7 +77,7 @@ public class ResultsGenerator implements Runnable {
         try {
             workerCheckResults = new WorkerCheckResults((message, replyTo, correlationId) -> {
                 latchStoreCheckResults.countDown();
-                System.out.println(message);
+                processSolution(message);
             });
             workerCheckResults.receiving();
             latchStoreCheckResults.await();
@@ -119,19 +119,21 @@ public class ResultsGenerator implements Runnable {
         CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
 
         // Attempt load of stored CheckResults for solution; allow for skipping
-//        if (configuration.isCheckResultRecoveryEnabled())
-//            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
+        if (configuration.isCheckResultRecoveryEnabled())
+            checkResultsStorage.recoverCheckResults(solution, checkProcessors);
 
         // Run Checks for solution
         for (CheckProcessor checkProcessor : checkProcessors) {
-            // NOTE the checks are executed here
             checkProcessor.runChecks(solution);
         }
 
-        // TODO get the check results from the front end
-
         // Store CheckResults of solution
         checkResultsStorage.storeCheckResults(solution);
+    }
+
+    protected void processSolution(String messageCheckResults) {
+        CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
+        checkResultsStorage.storeCheckResults(messageCheckResults);
     }
 
     private void writeSolutionsFailingAllUnitTests() {

@@ -2,8 +2,7 @@ package tech.clegg.gradeer.results;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import tech.clegg.gradeer.checks.ManualCheck;
 import tech.clegg.gradeer.checks.checkresults.CheckResult;
 import tech.clegg.gradeer.checks.Check;
@@ -40,34 +39,23 @@ public class CheckResultsStorage {
         // Load current execution's CheckResults & their associated Checks
         Collection<CheckResult> newCheckResults = solution.getAllCheckResults();
 
-        for (CheckResult cr : newCheckResults) {
-            ObjectMapper checkResultsMapper = new ObjectMapper();
-            String checkResultsJson = null;
-            String checkJson = null;
-            try {
-                checkResultsJson = checkResultsMapper.writeValueAsString(cr);
-                checkJson = checkResultsMapper.writeValueAsString(cr.getCheck());
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("checkResultsJson: " + checkResultsJson);
-            System.out.println("checkJson " + checkJson);
-        }
+//        for (CheckResult cr : newCheckResults) {
+//            ObjectMapper checkResultsMapper = new ObjectMapper();
+//            String checkResultsJson = null;
+//            String checkJson = null;
+//            try {
+//                checkResultsJson = checkResultsMapper.writeValueAsString(cr);
+//                checkJson = checkResultsMapper.writeValueAsString(cr.getCheck());
+//            } catch (JsonProcessingException e) {
+//                throw new RuntimeException(e);
+//            }
+//            System.out.println("checkResultsJson: " + checkResultsJson);
+//            System.out.println("checkJson " + checkJson);
+//        }
 
         Collection<Check> newCheckResultsChecks = newCheckResults.stream()
                 .map(CheckResult::getCheck)
                 .collect(Collectors.toList());
-
-//        for (Check c : newCheckResultsChecks) {
-//            ObjectMapper checkResultsChecksMapper = new ObjectMapper();
-//            String checkResultsChecksJson = null;
-//            try {
-//                checkResultsChecksJson = checkResultsChecksMapper.writeValueAsString(c);
-//            } catch (JsonProcessingException e) {
-//                throw new RuntimeException(e);
-//            }
-//            System.out.println("checkResultsChecksJson " + checkResultsChecksJson);
-//        }
 
         // Load existing stored CheckResultEntries that do NOT share Checks with the new CheckResults
         Collection<CheckResultEntry> checkResultEntries = Arrays.stream(loadExistingCheckResultEntries(solution))
@@ -108,9 +96,14 @@ public class CheckResultsStorage {
     /**
      * Parse the response from the frontend to Check entities
      *
-     * @param response The String format of check results from the frontend
+     * @param checkResults The String format of check results from the frontend
      */
-    public void storeCheckResults(String response) {
+    public void storeCheckResults(String checkResults) {
+        JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
+        System.out.println(checkResultsJson);
+        for (JsonElement checkResult : checkResultsJson) {
+            System.out.println(checkResult);
+        }
     }
 
     /**
