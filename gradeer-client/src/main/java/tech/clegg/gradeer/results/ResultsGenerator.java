@@ -58,7 +58,7 @@ public class ResultsGenerator implements Runnable {
                         if (Objects.equals(s.getIdentifier(), message)) {
                             Path mergedSolution = Paths.get(configuration.getMergedSolutionsDir() + File.separator + s.getIdentifier() + ".java").toAbsolutePath();
                             String content = new String(Files.readAllBytes(mergedSolution));
-                            processSolution(s);
+//                            processSolution(s);
                             workerMergedSolution.sending(content, replyTo, correlationId);
                         }
                     }
@@ -76,7 +76,12 @@ public class ResultsGenerator implements Runnable {
         try {
             workerCheckResults = new WorkerCheckResults((message, replyTo, correlationId) -> {
                 latchStoreCheckResults.countDown();
-                processSolution(message);
+                try {
+                    String checkResults = processSolution(message);
+                    workerCheckResults.sending(checkResults, replyTo, correlationId);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
             workerCheckResults.receiving();
             latchStoreCheckResults.await();
@@ -130,9 +135,9 @@ public class ResultsGenerator implements Runnable {
         checkResultsStorage.storeCheckResults(solution);
     }
 
-    protected void processSolution(String messageCheckResults) {
+    protected String processSolution(String messageCheckResults) {
         CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
-        checkResultsStorage.storeCheckResults(messageCheckResults);
+        return checkResultsStorage.storeCheckResults(messageCheckResults);
     }
 
     private void writeSolutionsFailingAllUnitTests() {

@@ -85,6 +85,7 @@ const saveSubmissions = async (student, assignment_id, grade, status, marker) =>
 
 const selectSubmissions = async () => {
   // Send the path to backend
+  // TODO could include the path in the database, if the path exists, start Gradeer
   await loadSubmissionPath(submissionFolder).then(response => {
     const formattedResposne = response.map(element => {
       return {

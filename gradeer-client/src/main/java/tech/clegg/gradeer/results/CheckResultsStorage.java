@@ -100,17 +100,22 @@ public class CheckResultsStorage {
      *
      * @param checkResults The String format of check results from the frontend
      */
-    public void storeCheckResults(String checkResults) {
+    public String storeCheckResults(String checkResults) {
         JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
-        System.out.println(checkResultsJson);
+        JsonArray resultsArray = new JsonArray();
         for (JsonElement element : checkResultsJson) {
             JsonObject checkResult = element.getAsJsonObject();
             String checkIdentifier = checkResult.get("type").getAsString() + "_" + checkResult.get("name").getAsString();
-
             double unweightedScore = getUnweightedScore(checkResult);
             String feedback = getFeedback(unweightedScore, checkResult);
-            System.out.println(checkIdentifier + " " + unweightedScore + " " + feedback);
+
+            JsonObject resultObject = new JsonObject();
+            resultObject.addProperty("checkIdentifier", checkIdentifier);
+            resultObject.addProperty("unweightedScore", "unweightedScore");
+            resultObject.addProperty("feedback", feedback);
+            resultsArray.add(resultObject);
         }
+        return resultsArray.toString();
     }
 
     public double getUnweightedScore(JsonObject checkResult) {

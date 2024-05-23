@@ -34,14 +34,12 @@ public class WorkerCheckResults {
             if (messageListener != null) {
                 messageListener.onMessageReceived(message, replyTo, correlationId);
             }
-            sending(replyTo, correlationId);
         };
         channel.basicConsume(QUEUE_SEND, true, deliverCallback, consumerTag -> {
         });
     }
 
-    public void sending(String replyTo, String correlationId) throws IOException {
-        String message = "hello - store check results";
+    public void sending(String message, String replyTo, String correlationId) throws IOException {
         AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
                 .correlationId(correlationId)
                 .build();
