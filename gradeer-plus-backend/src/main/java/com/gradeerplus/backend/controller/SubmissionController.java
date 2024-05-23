@@ -47,11 +47,10 @@ public class SubmissionController {
         return submissionServiceImpl.fetchSubmissionWithAssignmentAndMarker(assignment_id, marker);
     }
 
-    @GetMapping("/code")
-
-    public String getCodeById(@RequestParam int id) throws Exception {
-        return submissionServiceImpl.getCodeById(id);
-    }
+//    @GetMapping("/code")
+//    public String getCodeById(@RequestParam int id) throws Exception {
+//        return submissionServiceImpl.getCodeById(id);
+//    }
 
     @GetMapping("/checks")
     public String getAssignmentChecksById(@RequestParam int id) throws Exception {

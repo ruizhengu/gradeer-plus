@@ -19,8 +19,8 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     @Query(value = "SELECT * FROM submissions WHERE assignment_id = :assignment_id AND marker = :marker", nativeQuery = true)
     List<Submission> fetchSubmissionWithAssignmentAndMarker(@Param("assignment_id") Integer assignment_id, @Param("marker") String marker);
 
-    @Query(value = "SELECT code from submissions WHERE id = :id", nativeQuery = true)
-    String getCodeById(@Param("id") Integer id);
+//    @Query(value = "SELECT code from submissions WHERE id = :id", nativeQuery = true)
+//    String getCodeById(@Param("id") Integer id);
 
     @Query(value = "SELECT a.check_data FROM assignments a JOIN submissions s ON a.id = s.assignment_id WHERE s.id = :id", nativeQuery = true)
     String getAssignmentChecksById(@Param("id") Integer id);

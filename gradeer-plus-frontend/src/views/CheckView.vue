@@ -55,8 +55,8 @@ getCheckById(id).then(response => {
 //   return checks.value.filter(check => check.name != 'Z__General')
 // })
 
-const submit = () => {
-  updateCheckById(id, checks.value).then(response => {
+const submit = async () => {
+  await updateCheckById(id, checks.value).then(response => {
     if (response.status == '200') {
       alert("Check Submitted!");
       back()

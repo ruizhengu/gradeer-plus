@@ -22,10 +22,10 @@ public class SubmissionServiceImpl implements SubmissionService {
         return submissionRepository.fetchSubmissionWithAssignmentAndMarker(assignment_id, marker);
     }
 
-    @Override
-    public String getCodeById(Integer id) {
-        return submissionRepository.getCodeById(id);
-    }
+//    @Override
+//    public String getCodeById(Integer id) {
+//        return submissionRepository.getCodeById(id);
+//    }
 
     @Override
     public String getAssignmentChecksById(Integer id) {

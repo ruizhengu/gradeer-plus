@@ -23,16 +23,11 @@ const code = ref("")
 
 const loadMergedSolution = async (student) => {
   await getMergedSolution(student).then(response => {
-    // console.log(response)
     code.value = response
   })
 }
 
 loadMergedSolution(student)
-
-// getCodeById(id).then(response => {
-//   code.value = response
-// })
 
 const initalForm = {
   type: '',
@@ -59,7 +54,6 @@ getAssignmentChecksById(id).then(response => {
     checks.value.forEach(check => {
       check.result = parseFloat(Number(5).toFixed(1))
     })
-    console.log(checks.value)
   } else {
     checks.value = [initalForm]
   }
@@ -67,13 +61,14 @@ getAssignmentChecksById(id).then(response => {
 
 const updateMark = (index) => {
   checks.value[index].result = parseFloat(Number(checks.value[index].result).toFixed(1))
-  // console.log(checks.value[index])
 }
 
 const submit = async () => {
-  console.log(checks.value)
   await storeCheckResults(checks.value).then(response => {
-    console.log(response)
+    if (response.status == '200') {
+      alert("Check Results Submitted!")
+      back()
+    }
   })
 }
 

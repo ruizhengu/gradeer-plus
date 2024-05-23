@@ -11,7 +11,7 @@ public interface SubmissionService {
 
     List<Submission> fetchSubmissionWithAssignmentAndMarker(Integer assignment_id, String marker);
 
-    String getCodeById(Integer id);
+//    String getCodeById(Integer id);
 
     String getAssignmentChecksById(Integer id);
 
