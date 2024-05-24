@@ -9,13 +9,14 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   getMergedSolution,
   getAssignmentChecksById,
-  getCheckResults,
-  generateGrade
+  generateGrade,
+  storeGrade
 } from '@/api/submissions'
 
 const router = useRouter()
 const route = useRoute()
-const id = route.query.id
+const assignment_id = route.query.assignment_id
+const submission_id = route.query.submission_id
 const student = route.query.student
 
 const highlightjs = hljsVuePlugin.component
@@ -49,7 +50,7 @@ const initalForm = {
 
 const checks = ref([])
 
-getAssignmentChecksById(id).then(response => {
+getAssignmentChecksById(assignment_id).then(response => {
   if (response.length != 0) {
     checks.value = response
     checks.value.forEach(check => {
@@ -66,13 +67,21 @@ const updateMark = (index) => {
 
 const submit = async () => {
   // await getCheckResults(checks.value).then(response => {
+  var grade = "0"
   await generateGrade(checks.value).then(response => {
     if (response.status == '200') {
       console.log(response.data)
+      grade = response.data
       alert("Check Results Submitted!")
+    }
+  })
+  await storeGrade(submission_id, grade).then(response => {
+    if (response.status == '200') {
       back()
     }
   })
+
+
 }
 
 const back = () => {

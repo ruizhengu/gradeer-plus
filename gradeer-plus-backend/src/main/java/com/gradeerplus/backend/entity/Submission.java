@@ -20,7 +20,7 @@ public class Submission {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
 
-    private Integer grade;
+    private double grade;
 
     private String status;
 
@@ -50,11 +50,11 @@ public class Submission {
         this.assignment = assignment;
     }
 
-    public Integer getGrade() {
+    public double getGrade() {
         return grade;
     }
 
-    public void setGrade(Integer grade) {
+    public void setGrade(double grade) {
         this.grade = grade;
     }
 

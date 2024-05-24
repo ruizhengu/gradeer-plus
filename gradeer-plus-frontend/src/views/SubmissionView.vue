@@ -23,14 +23,14 @@ import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
-const id = route.query.id
+const assignment_id = route.query.id
 
 const submissions = ref([])
 
 // TODO load current user as the marker 
 const marker = "Ruizhen"
 
-fetchSubmissionWithAssignmentAndMarker(id, marker).then(response => {
+fetchSubmissionWithAssignmentAndMarker(assignment_id, marker).then(response => {
   submissions.value = response
 })
 
@@ -67,8 +67,8 @@ const statusClass = (status) => {
   }
 }
 
-const enterMarkingView = (id, student) => {
-  router.push({ name: 'marking', query: { id: id, student: student } })
+const enterMarkingView = (assignment_id, submission_id, student) => {
+  router.push({ name: 'marking', query: { assignment_id: assignment_id, submission_id: submission_id, student: student } })
 }
 
 const back = () => {
@@ -90,7 +90,7 @@ const selectSubmissions = async () => {
     const formattedResposne = response.map(element => {
       return {
         student: element,
-        assignment_id: parseInt(id),
+        assignment_id: parseInt(assignment_id),
         grade: 0,
         status: "Not Started",
         marker: marker
@@ -153,7 +153,7 @@ const selectSubmissions = async () => {
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
                     <BaseButton color="success" :icon="mdiFountainPenTip" small label="Marking"
-                      @click="enterMarkingView(id, submission.student)" />
+                      @click="enterMarkingView(assignment_id, submission.id, submission.student)" />
                   </BaseButtons>
                 </td>
               </tr>

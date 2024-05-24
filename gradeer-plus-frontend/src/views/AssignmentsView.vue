@@ -6,7 +6,6 @@ import {
   mdiCalendarCheck,
   mdiPlus,
   mdiFileSendOutline,
-  mdiUpload
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue'
 import CardBoxModal from '@/components/CardBoxModal.vue'
@@ -120,7 +119,6 @@ const funcDeleteAssignmet = async () => {
 
                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                   <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                    <BaseButton color="info" :icon="mdiUpload" small label="Upload" />
                     <BaseButton color="info" :icon="mdiEye" label="Checks" small=""
                       @click="editAssignmentCheck(assignment.id, assignment.module, assignment.name)" />
                     <BaseButton color="info" :icon="mdiFileSendOutline" small label="Distribute" />

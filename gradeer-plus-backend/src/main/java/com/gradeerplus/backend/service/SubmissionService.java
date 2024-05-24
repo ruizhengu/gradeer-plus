@@ -23,7 +23,7 @@ public interface SubmissionService {
             String marker
     );
 
-    String processCheckResults(String checkResults);
-
     double generateGrade(String checkResults);
+
+    void storeGrade(int submission_id, double grade);
 }

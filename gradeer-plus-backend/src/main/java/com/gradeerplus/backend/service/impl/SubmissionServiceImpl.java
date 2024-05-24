@@ -42,25 +42,6 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public String processCheckResults(String checkResults) {
-        JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
-        JsonArray resultsArray = new JsonArray();
-        for (JsonElement element : checkResultsJson) {
-            JsonObject checkResult = element.getAsJsonObject();
-            String checkIdentifier = checkResult.get("type").getAsString() + "_" + checkResult.get("name").getAsString();
-            double unweightedScore = getUnweightedScore(checkResult);
-            String feedback = getFeedback(unweightedScore, checkResult);
-
-            JsonObject resultObject = new JsonObject();
-            resultObject.addProperty("checkIdentifier", checkIdentifier);
-            resultObject.addProperty("unweightedScore", "unweightedScore");
-            resultObject.addProperty("feedback", feedback);
-            resultsArray.add(resultObject);
-        }
-        return resultsArray.toString();
-    }
-
-    @Override
     public double generateGrade(String checkResults) {
         double totalWeight = 0;
         double weightedScoreSum = 0;
@@ -75,21 +56,16 @@ public class SubmissionServiceImpl implements SubmissionService {
         return (100 * weightedScoreSum) / totalWeight;
     }
 
+    @Override
+    public void storeGrade(int submission_id, double grade) {
+        submissionRepository.storeGrade(submission_id, grade);
+    }
+
     public double calculateWeightedScore(JsonObject checkResult) {
         double unweightedScore = getUnweightedScore(checkResult);
         double weight = checkResult.get("weight").getAsDouble();
         return unweightedScore * weight;
     }
-
-//    public double getTotalWeight(JsonArray checkResults) {
-//        double totalWeight = 0;
-//        for (JsonElement element : checkResults) {
-//            JsonObject checkResult = element.getAsJsonObject();
-//            double weight = checkResult.get("weight").getAsDouble();
-//            totalWeight += weight;
-//        }
-//        return totalWeight;
-//    }
 
     public double getUnweightedScore(JsonObject checkResult) {
         // TODO does not cover binary options (could modify the option in the frontend e.g., slide to ratio button)
