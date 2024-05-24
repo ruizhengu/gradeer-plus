@@ -9,8 +9,8 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   getMergedSolution,
   getAssignmentChecksById,
-  generateGrade,
-  storeGrade
+  storeGrade,
+  storeFeedback
 } from '@/api/submissions'
 
 const router = useRouter()
@@ -66,22 +66,24 @@ const updateMark = (index) => {
 }
 
 const submit = async () => {
-  // await getCheckResults(checks.value).then(response => {
-  var grade = "0"
-  await generateGrade(checks.value).then(response => {
+  var flagStoreGradeSuccess = false
+  var flagStoreFeedbackSuccess = false
+
+  await storeGrade(submission_id, checks.value).then(response => {
     if (response.status == '200') {
-      console.log(response.data)
-      grade = response.data
-      alert("Check Results Submitted!")
+      flagStoreGradeSuccess = true
     }
   })
-  await storeGrade(submission_id, grade).then(response => {
+  await storeFeedback(submission_id, checks.value).then(response => {
     if (response.status == '200') {
-      back()
+      flagStoreFeedbackSuccess = true
     }
   })
 
-
+  if (flagStoreGradeSuccess == true && flagStoreFeedbackSuccess == true) {
+    alert("Check Results Submitted!")
+    back()
+  }
 }
 
 const back = () => {

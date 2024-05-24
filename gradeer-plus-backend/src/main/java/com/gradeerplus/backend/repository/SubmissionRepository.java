@@ -43,4 +43,20 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
             @Param("submission_id") int submission_id,
             @Param("grade") double grade
     );
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE submissions SET feedback = :feedback WHERE id = :submission_id", nativeQuery = true)
+    void storeFeedback(
+            @Param("submission_id") int submission_id,
+            @Param("feedback") String feedback
+    );
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE submissions SET status = :status WHERE id = :submission_id", nativeQuery = true)
+    void updateStatus(
+            @Param("submission_id") int submission_id,
+            @Param("status") String status
+    );
 }

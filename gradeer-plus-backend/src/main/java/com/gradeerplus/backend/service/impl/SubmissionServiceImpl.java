@@ -42,6 +42,17 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
+    public void storeGrade(int submission_id, String checkResults) {
+        double grade = generateGrade(checkResults);
+        submissionRepository.storeGrade(submission_id, grade);
+    }
+
+    @Override
+    public void storeFeedback(int submission_id, String checkResults) {
+        String feedback = generateFeedback(checkResults);
+        submissionRepository.storeFeedback(submission_id, feedback);
+    }
+
     public double generateGrade(String checkResults) {
         double totalWeight = 0;
         double weightedScoreSum = 0;
@@ -56,9 +67,26 @@ public class SubmissionServiceImpl implements SubmissionService {
         return (100 * weightedScoreSum) / totalWeight;
     }
 
-    @Override
-    public void storeGrade(int submission_id, double grade) {
-        submissionRepository.storeGrade(submission_id, grade);
+    public String generateFeedback(String checkResults) {
+        StringBuilder sb = new StringBuilder();
+        JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
+        for (JsonElement element : checkResultsJson) {
+            JsonObject checkResult = element.getAsJsonObject();
+            String feedback = "";
+            double bestScore = -1;
+            double unweightedScore = getUnweightedScore(checkResult);
+            JsonArray feedbackValues = checkResult.get("feedbackValues").getAsJsonArray();
+            for (JsonElement feedbackValue : feedbackValues) {
+                JsonObject feedbackObject = feedbackValue.getAsJsonObject();
+                double score = feedbackObject.get("score").getAsDouble();
+                if (score <= unweightedScore && score > bestScore) {
+                    bestScore = score;
+                    feedback = feedbackObject.get("feedback").getAsString();
+                }
+            }
+            sb.append(feedback).append("\n");
+        }
+        return sb.toString();
     }
 
     public double calculateWeightedScore(JsonObject checkResult) {
@@ -81,20 +109,5 @@ public class SubmissionServiceImpl implements SubmissionService {
             }
         }
         return unweightedScore;
-    }
-
-    public String getFeedback(double unweightedScore, JsonObject checkResult) {
-        JsonArray feedbackValues = checkResult.get("feedbackValues").getAsJsonArray();
-        String feedback = "";
-        double bestScore = -1;
-        for (JsonElement element : feedbackValues) {
-            JsonObject feedbackObject = element.getAsJsonObject();
-            double score = feedbackObject.get("score").getAsDouble();
-            if (score <= unweightedScore && score > bestScore) {
-                bestScore = score;
-                feedback = feedbackObject.get("feedback").getAsString();
-            }
-        }
-        return feedback;
     }
 }

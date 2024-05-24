@@ -20,9 +20,11 @@ public class Submission {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Assignment assignment;
 
+    private String status;
+
     private double grade;
 
-    private String status;
+    private String feedback;
 
     private String marker;
 
@@ -50,6 +52,14 @@ public class Submission {
         this.assignment = assignment;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public double getGrade() {
         return grade;
     }
@@ -58,12 +68,12 @@ public class Submission {
         this.grade = grade;
     }
 
-    public String getStatus() {
-        return status;
+    public String getFeedback() {
+        return feedback;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
     }
 
     public String getMarker() {

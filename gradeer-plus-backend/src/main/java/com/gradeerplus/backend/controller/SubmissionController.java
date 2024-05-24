@@ -83,14 +83,14 @@ public class SubmissionController {
         return ResponseEntity.ok(responseText);
     }
 
-    @PostMapping("/grade")
-    public double generateGrade(@RequestBody String checkResults) throws Exception {
-        return submissionServiceImpl.generateGrade(checkResults);
+    @PostMapping("/storeGrade")
+    public void storeGrade(@RequestParam int submission_id, @RequestBody String checkResults) {
+        submissionServiceImpl.storeGrade(submission_id, checkResults);
     }
 
-    @PostMapping("/storeGrade")
-    public void storeGrade(@RequestParam int submission_id, @RequestParam double grade) {
-        submissionServiceImpl.storeGrade(submission_id, grade);
+    @PostMapping("/storeFeedback")
+    public void storeFeedback(@RequestParam int submission_id, @RequestBody String checkResults) {
+        submissionServiceImpl.storeFeedback(submission_id, checkResults);
     }
 
     @PostMapping("/save")

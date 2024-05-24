@@ -82,9 +82,9 @@ export const storeSubmission = async (student, assignment_id, grade, status, mar
   }
 }
 
-export const generateGrade = async (results) => {
+export const storeGrade = async (submission_id, checkResults) => {
   try {
-    return await axios.post('http://localhost:8080/submissions/grade', results).then(response => response)
+    return await axios.post(`http://localhost:8080/submissions/storeGrade?submission_id=${submission_id}`, checkResults).then(response => response)
   } catch (error) {
     throw {
       code: error.code,
@@ -94,9 +94,9 @@ export const generateGrade = async (results) => {
   }
 }
 
-export const storeGrade = async (submission_id, grade) => {
+export const storeFeedback = async (submission_id, checkResults) => {
   try {
-    return await axios.post(`http://localhost:8080/submissions/storeGrade?submission_id=${submission_id}&grade=${grade}`).then(response => response)
+    return await axios.post(`http://localhost:8080/submissions/storeFeedback?submission_id=${submission_id}`, checkResults).then(response => response)
   } catch (error) {
     throw {
       code: error.code,
