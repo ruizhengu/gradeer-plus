@@ -82,9 +82,9 @@ export const storeSubmission = async (student, assignment_id, grade, status, mar
   }
 }
 
-export const storeCheckResults = async (results) => {
+export const getCheckResults = async (results) => {
   try {
-    return await axios.post('http://localhost:8080/submissions/storeCheckResults', results).then(response => response)
+    return await axios.post('http://localhost:8080/submissions/checkResults', results).then(response => response)
   } catch (error) {
     throw {
       code: error.code,

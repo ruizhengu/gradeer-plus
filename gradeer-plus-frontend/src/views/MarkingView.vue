@@ -9,7 +9,7 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   getMergedSolution,
   getAssignmentChecksById,
-  storeCheckResults
+  getCheckResults
 } from '@/api/submissions'
 
 const router = useRouter()
@@ -64,8 +64,9 @@ const updateMark = (index) => {
 }
 
 const submit = async () => {
-  await storeCheckResults(checks.value).then(response => {
+  await getCheckResults(checks.value).then(response => {
     if (response.status == '200') {
+      // console.log(response.data)
       alert("Check Results Submitted!")
       back()
     }

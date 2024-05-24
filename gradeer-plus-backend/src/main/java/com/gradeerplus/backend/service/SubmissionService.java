@@ -22,4 +22,6 @@ public interface SubmissionService {
             String status,
             String marker
     );
+
+    String processCheckResults(String checkResults);
 }

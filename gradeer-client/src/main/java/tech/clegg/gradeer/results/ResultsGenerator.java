@@ -26,7 +26,6 @@ public class ResultsGenerator implements Runnable {
     protected List<CheckProcessor> checkProcessors;
     private Configuration configuration;
     private WorkerMergedSolution workerMergedSolution;
-    private WorkerCheckResults workerCheckResults;
 
     public ResultsGenerator(Collection<Solution> studentSolutions, List<CheckProcessor> checkProcessors, Configuration configuration) {
         this.studentSolutions = studentSolutions;
@@ -68,23 +67,6 @@ public class ResultsGenerator implements Runnable {
             });
             workerMergedSolution.receiving();
             latchMergedSolution.await();
-        } catch (IOException | TimeoutException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        CountDownLatch latchStoreCheckResults = new CountDownLatch(1);
-        try {
-            workerCheckResults = new WorkerCheckResults((message, replyTo, correlationId) -> {
-                latchStoreCheckResults.countDown();
-                try {
-                    String checkResults = processSolution(message);
-                    workerCheckResults.sending(checkResults, replyTo, correlationId);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            workerCheckResults.receiving();
-            latchStoreCheckResults.await();
         } catch (IOException | TimeoutException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -133,11 +115,6 @@ public class ResultsGenerator implements Runnable {
 
         // Store CheckResults of solution
         checkResultsStorage.storeCheckResults(solution);
-    }
-
-    protected String processSolution(String messageCheckResults) {
-        CheckResultsStorage checkResultsStorage = new CheckResultsStorage(configuration);
-        return checkResultsStorage.storeCheckResults(messageCheckResults);
     }
 
     private void writeSolutionsFailingAllUnitTests() {

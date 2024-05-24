@@ -82,16 +82,9 @@ public class SubmissionController {
         return ResponseEntity.ok(responseText);
     }
 
-    @PostMapping("/storeCheckResults")
-    public ResponseEntity<String> storeCheckResults(@RequestBody String checkResults) throws Exception {
-        MessageProperties props = new MessageProperties();
-        props.setReplyTo("store-check-results-receive");
-        props.setCorrelationId(UUID.randomUUID().toString());
-        Message message = new Message(checkResults.getBytes(StandardCharsets.UTF_8), props);
-        Message response = rabbitTemplate.sendAndReceive("store-check-results-send", message);
-        assert response != null;
-        String responseText = new String(response.getBody(), StandardCharsets.UTF_8);
-        return ResponseEntity.ok(responseText);
+    @PostMapping("/checkResults")
+    public String getCheckResults(@RequestBody String checkResults) throws Exception {
+        return submissionServiceImpl.processCheckResults(checkResults);
     }
 
     @PostMapping("/save")
