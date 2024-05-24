@@ -93,6 +93,11 @@ public class SubmissionController {
         submissionServiceImpl.storeFeedback(submission_id, checkResults);
     }
 
+    @PostMapping("/status")
+    public void updateStatus(@RequestParam int submission_id, @RequestParam String status) {
+        submissionServiceImpl.updateStatus(submission_id, status);
+    }
+
     @PostMapping("/save")
     public void saveSubmission(
             @RequestParam String student,

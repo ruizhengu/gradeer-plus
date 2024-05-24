@@ -26,4 +26,6 @@ public interface SubmissionService {
     void storeGrade(int submission_id, String checkResults);
 
     void storeFeedback(int submission_id, String checkResults);
+
+    void updateStatus(int submission_id, String status);
 }

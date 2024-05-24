@@ -10,7 +10,8 @@ import {
   getMergedSolution,
   getAssignmentChecksById,
   storeGrade,
-  storeFeedback
+  storeFeedback,
+  updateStatus
 } from '@/api/submissions'
 
 const router = useRouter()
@@ -79,8 +80,8 @@ const submit = async () => {
       flagStoreFeedbackSuccess = true
     }
   })
-
   if (flagStoreGradeSuccess == true && flagStoreFeedbackSuccess == true) {
+    await updateStatus(submission_id, "Done")
     alert("Check Results Submitted!")
     back()
   }

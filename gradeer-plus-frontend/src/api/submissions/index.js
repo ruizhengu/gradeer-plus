@@ -105,3 +105,15 @@ export const storeFeedback = async (submission_id, checkResults) => {
     }
   }
 }
+
+export const updateStatus = async (submission_id, status) => {
+  try {
+    return await axios.post(`http://localhost:8080/submissions/status?submission_id=${submission_id}&status=${status}`).then(response => response)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}

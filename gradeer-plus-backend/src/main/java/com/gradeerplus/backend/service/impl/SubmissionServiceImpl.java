@@ -53,6 +53,11 @@ public class SubmissionServiceImpl implements SubmissionService {
         submissionRepository.storeFeedback(submission_id, feedback);
     }
 
+    @Override
+    public void updateStatus(int submission_id, String status) {
+        submissionRepository.updateStatus(submission_id, status);
+    }
+
     public double generateGrade(String checkResults) {
         double totalWeight = 0;
         double weightedScoreSum = 0;
