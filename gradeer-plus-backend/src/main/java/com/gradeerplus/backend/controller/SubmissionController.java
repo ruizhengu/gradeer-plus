@@ -5,6 +5,7 @@ import com.gradeerplus.backend.entity.Submission;
 import com.gradeerplus.backend.service.impl.SubmissionServiceImpl;
 import com.rabbitmq.client.DeliverCallback;
 import jakarta.annotation.Resource;
+import org.hibernate.sql.ast.tree.from.StandardTableGroup;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.Queue;
@@ -85,6 +86,11 @@ public class SubmissionController {
     @PostMapping("/checkResults")
     public String getCheckResults(@RequestBody String checkResults) throws Exception {
         return submissionServiceImpl.processCheckResults(checkResults);
+    }
+
+    @PostMapping("/grade")
+    public double generateGrade(@RequestBody String checkResults) throws Exception {
+        return submissionServiceImpl.generateGrade(checkResults);
     }
 
     @PostMapping("/save")

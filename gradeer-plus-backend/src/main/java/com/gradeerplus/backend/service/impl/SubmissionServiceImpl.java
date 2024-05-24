@@ -60,6 +60,37 @@ public class SubmissionServiceImpl implements SubmissionService {
         return resultsArray.toString();
     }
 
+    @Override
+    public double generateGrade(String checkResults) {
+        double totalWeight = 0;
+        double weightedScoreSum = 0;
+        JsonArray checkResultsJson = JsonParser.parseString(checkResults).getAsJsonArray();
+        for (JsonElement element : checkResultsJson) {
+            JsonObject checkResult = element.getAsJsonObject();
+            double weight = checkResult.get("weight").getAsDouble();
+            double weightedScore = calculateWeightedScore(checkResult);
+            totalWeight += weight;
+            weightedScoreSum += weightedScore;
+        }
+        return (100 * weightedScoreSum) / totalWeight;
+    }
+
+    public double calculateWeightedScore(JsonObject checkResult) {
+        double unweightedScore = getUnweightedScore(checkResult);
+        double weight = checkResult.get("weight").getAsDouble();
+        return unweightedScore * weight;
+    }
+
+//    public double getTotalWeight(JsonArray checkResults) {
+//        double totalWeight = 0;
+//        for (JsonElement element : checkResults) {
+//            JsonObject checkResult = element.getAsJsonObject();
+//            double weight = checkResult.get("weight").getAsDouble();
+//            totalWeight += weight;
+//        }
+//        return totalWeight;
+//    }
+
     public double getUnweightedScore(JsonObject checkResult) {
         // TODO does not cover binary options (could modify the option in the frontend e.g., slide to ratio button)
         double unweightedScore = 1.0;

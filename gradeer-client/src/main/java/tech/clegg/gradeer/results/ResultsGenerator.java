@@ -1,12 +1,9 @@
 package tech.clegg.gradeer.results;
 
-import tech.clegg.gradeer.api.MessageListener;
-import tech.clegg.gradeer.api.WorkerCheckResults;
 import tech.clegg.gradeer.api.WorkerMergedSolution;
 import tech.clegg.gradeer.checks.Check;
 import tech.clegg.gradeer.checks.checkprocessing.CheckProcessor;
 import tech.clegg.gradeer.configuration.Configuration;
-import tech.clegg.gradeer.preprocessing.SourceInspectorPreProcessor;
 import tech.clegg.gradeer.results.io.CSVWriter;
 import tech.clegg.gradeer.results.io.DelayedFileWriter;
 import tech.clegg.gradeer.solution.Solution;
@@ -81,11 +78,11 @@ public class ResultsGenerator implements Runnable {
 //            solutionNumber++;
 //        }
 //
-//        writeSolutionsFailingAllUnitTests();
-//        writeCombinedCheckResults();
-//        writeGrades();
-//        writeFeedback();
-//        writeSplitResultsWithWeights();
+        writeSolutionsFailingAllUnitTests();
+        writeCombinedCheckResults();
+        writeGrades();
+        writeFeedback();
+        writeSplitResultsWithWeights();
 //
 //        // Write summary of solution flags
 //        SolutionFlagWriter solutionFlagWriter = new SolutionFlagWriter(configuration);

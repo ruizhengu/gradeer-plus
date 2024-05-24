@@ -24,4 +24,6 @@ public interface SubmissionService {
     );
 
     String processCheckResults(String checkResults);
+
+    double generateGrade(String checkResults);
 }

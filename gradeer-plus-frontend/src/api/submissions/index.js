@@ -93,3 +93,15 @@ export const getCheckResults = async (results) => {
     }
   }
 }
+
+export const generateGrade = async (results) => {
+  try {
+    return await axios.post('http://localhost:8080/submissions/grade', results).then(response => response)
+  } catch (error) {
+    throw {
+      code: error.code,
+      message: error.message,
+      responseStatus: error.response?.status,
+    }
+  }
+}
